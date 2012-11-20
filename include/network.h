@@ -2,6 +2,8 @@
 #define __DANET_NETWORK_H
 
 #include "netbase.h"
+#include "acceptor.h"
+#include "connection.h"
 
 #include <string>
 #include <vector>
@@ -43,25 +45,23 @@ namespace danet
     /**
      * Każe menadżerowi sieci nasłuchiwać na danym IP i porcie.
      *
-     * @param ip IP na którym menadżer sieci ma nasłuchiwać
-     * @param port Port na którym menadżer sieci ma nasłuchiwać
+     * @param acc Akceptor, który ma nasłuchiwać połączeń.
      * @return Zwraca uchwyt do akceptora.
      */
-    handle listen(std::string ip, int port)
+    handle listen(acceptor *acc)
     {
-      return this->netbase::listen_at(ip, port);
+      return this->netbase::listen_at(acc);
     }
 
     /**
      * Każe menadżerowi sieci połączyć się z danym IP i portem.
      *
-     * @param ip IP z którym menadżer sieci ma się połączyć.
-     * @param port Port z którym menadżer sieci ma się połączyć.
+     * @param con Połączenie, które ma nawiązać.
      * @return Zwraca uchwyt do połączenia.
      */
-    handle connect(std::string ip, int port)
+    handle connect(connection *con)
     {
-      return this->netbase::connect_to(ip, port);
+      return this->netbase::connect_to(con);
     }
 
     /**

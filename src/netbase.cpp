@@ -63,21 +63,6 @@ namespace danet
 
   }
 
-  netbase::address netbase::resolve(std::string ip, int port)
-  {
-    bnet::ip::tcp::resolver resolver(this->service);
-    bnet::ip::tcp::resolver::query query(ip, to_string(port));
-    bsys::error_code ec;
-    bnet::ip::tcp::resolver::iterator endpoint = resolver.resolve(query, ec);
-    if(ec)
-    {
-      // Nastąpił błąd - prawdopodobnie nie znaleziono host...
-      // TODO: Rzuć wyjątek, etc.
-    }
-    return *endpoint;
-  }
-
-
   void netbase::io_worker()
   {
     while( true )

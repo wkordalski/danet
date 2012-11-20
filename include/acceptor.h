@@ -27,18 +27,20 @@ namespace danet
   {
     friend netbase;
   public:
-    virtual ~acceptor();
+    virtual ~acceptor() = 0;
   private:
   protected:
-    acceptor(netbase *nb, std::string ip, int port);
-    void accept();
-    void on_accept(const boost::system::error_code & ec, std::shared_ptr<connection> con);
+    virtual void run(netbase *nb) = 0;
 
-    // Netbase object pointer
+    // Musi być...
     netbase *nb;
 
-    // Acceptor object pointer
-    boost::asio::ip::tcp::acceptor *acc;
+    boost::asio::io_service & get_ioservice()
+    {
+      return nb->service;
+    }
+
+
   };
 }
 #endif	/* ACCEPTOR_H */

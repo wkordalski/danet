@@ -18,6 +18,8 @@ namespace danet
 #include <thread>
 #include <vector>
 
+#include "acceptor.h"
+
 namespace danet
 {
   class netbase
@@ -32,13 +34,16 @@ namespace danet
     ~netbase();
 
   protected:
-    handle listen_at(std::string ip, int port);
-    handle connect_to(std::string ip, int port);
+    handle listen_at(acceptor *acc);
+    handle connect_to(connection *con);
     void close_resource(handle h);
     void send_message(const std::vector<byte> &v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user &s);
 
-    address resolve(std::string ip, int port);
+    boost::asio::io_service & get_service()
+    {
+      return this->service;
+    }
 
     void io_worker();
 
