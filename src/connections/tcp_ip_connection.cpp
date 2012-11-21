@@ -48,6 +48,11 @@ namespace danet
         sck->async_connect(*endpoint, bind(&connection::on_connect, this, placeholders::_1));
         return true;
       }
+
+      void connection::on_connect(const boost::system::error_code& ec)
+      {
+        // TODO
+      }
     }
   }
 }

@@ -8,14 +8,6 @@
 #include <vector>
 
 
-namespace
-{
-  std::vector<byte> default_password_serializer(const std::string &pwd)
-  {
-    return std::vector<byte>();
-  }
-}
-
 /**
  * Przestrzeń nazw zawierająca obiekty do zarządzania siecią.
  */
@@ -47,15 +39,18 @@ namespace danet
     /**
      * Tworzy obiekt menadżera sieci
      */
-    network() : netbase()
+    network(std::shared_ptr<protocol> pro) : netbase(pro)
     {
 
     }
+
+    network(const network<T,P> &) = delete;
 
     /**
      * Każe menadżerowi sieci nasłuchiwać na danym IP i porcie.
      *
      * @param adr Adres, na którym mamy słuchać
+     * @param passwd Hasło do sieci
      * @return Zwraca uchwyt do akceptora.
      */
     handle listen(address *adr, const P& passwd)
@@ -66,7 +61,8 @@ namespace danet
     /**
      * Każe menadżerowi sieci połączyć się z danym IP i portem.
      *
-     * @param con Połączenie, które ma nawiązać.
+     * @param adr Adres, do którego mamy się podłączyć
+     * @param passwd Hasło do sieci
      * @return Zwraca uchwyt do połączenia.
      */
     handle connect(address *adr, const P& passwd)

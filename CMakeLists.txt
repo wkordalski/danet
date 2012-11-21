@@ -16,6 +16,8 @@ include_directories(
 add_library(danet SHARED
   src/netbase.cpp
 
+  src/protocols/basic_00.cpp
+
   src/address/tcp_ip_address.cpp
   src/acceptors/tcp_ip_acceptor.cpp
   src/connections/tcp_ip_connection.cpp

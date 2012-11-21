@@ -6,7 +6,7 @@ namespace danet
   class protocol
   {
   public:
-    virtual ~protocol() = 0;
+    virtual ~protocol() {};
   };
 }
 

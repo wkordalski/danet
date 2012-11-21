@@ -20,7 +20,7 @@ namespace danet
   {
     friend netbase;
   public:
-    virtual ~acceptor() = 0;
+    virtual ~acceptor() {};
   private:
   protected:
     virtual bool run(netbase *nb) = 0;

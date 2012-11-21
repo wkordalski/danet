@@ -8,6 +8,7 @@ namespace danet
 }
 
 #include "address.h"
+#include "protocol.h"
 
 #include <boost/asio.hpp>
 
@@ -29,8 +30,8 @@ namespace danet
     typedef unsigned int handle;
     typedef unsigned int user;
 
-    netbase();
-    netbase(const netbase& orig);
+    netbase(std::shared_ptr<protocol> pro);
+    netbase(const netbase&) = delete;
     ~netbase();
 
   protected:

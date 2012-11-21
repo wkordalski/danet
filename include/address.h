@@ -18,7 +18,7 @@ namespace danet
   {
     friend class netbase;
   public:
-    virtual ~address() = 0;
+    virtual ~address() {};
 
   protected:
     virtual std::shared_ptr<danet::acceptor>     acceptor() = 0;

@@ -29,7 +29,7 @@ namespace danet
     friend class netbase;
     friend class acceptor;
   public:
-    virtual ~connection() = 0;
+    virtual ~connection() {};
 
   protected:
     virtual bool run(netbase *nb) = 0;

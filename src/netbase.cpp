@@ -51,7 +51,7 @@ namespace bsys = boost::system;
 
 namespace danet
 {
-  netbase::netbase() : work(service)
+  netbase::netbase(shared_ptr<protocol> pro) : work(service)
   {
     // Dodaj wątek
     workers.push_back(new thread(bind(&netbase::io_worker, this)));
@@ -60,7 +60,11 @@ namespace danet
 
   netbase::~netbase()
   {
-
+    this->service.stop();
+    for(thread *t: this->workers)
+    {
+      t->join();
+    }
   }
 
   void netbase::io_worker()
