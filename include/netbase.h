@@ -7,6 +7,8 @@ namespace danet
   typedef unsigned char byte;
 }
 
+#include "address.h"
+
 #include <boost/asio.hpp>
 
 #include <condition_variable>
@@ -18,7 +20,6 @@ namespace danet
 #include <thread>
 #include <vector>
 
-#include "acceptor.h"
 
 namespace danet
 {
@@ -34,8 +35,8 @@ namespace danet
     ~netbase();
 
   protected:
-    handle listen_at(acceptor *acc);
-    handle connect_to(connection *con);
+    handle listen_at(address *adr, const std::vector<byte>& pwd);
+    handle connect_to(address *adr, const std::vector<byte>& pwd);
     void close_resource(handle h);
     void send_message(const std::vector<byte> &v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user &s);

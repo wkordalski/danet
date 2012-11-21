@@ -2,12 +2,19 @@
 #define __DANET_NETWORK_H
 
 #include "netbase.h"
-#include "acceptor.h"
-#include "connection.h"
+#include "address.h"
 
 #include <string>
 #include <vector>
 
+
+namespace
+{
+  std::vector<byte> default_password_serializer(const std::string &pwd)
+  {
+    return std::vector<byte>();
+  }
+}
 
 /**
  * Przestrzeń nazw zawierająca obiekty do zarządzania siecią.
@@ -19,20 +26,23 @@ namespace danet
    *
    * @param T Typ reprezentujący wiadomości wysyłane przez menadżer sieci.
    * Musi zawierać statyczne funkcje get_data i set_data.
+   *
+   * @param P Typ reprezentujący hasło przy łączeniu z siecią.
+   * Musi zawierać funkcję data.
    */
-  template<class T>
+  template<class T, class P>
   class network : protected netbase
   {
   public:
     /**
      * Represents the network manager handle type
      */
-    typedef netbase::handle handle;
+    //typedef netbase::handle handle;
 
     /**
      * Represents the network user id type
      */
-    typedef netbase::user user;
+    //typedef netbase::user user;
 
     /**
      * Tworzy obiekt menadżera sieci
@@ -45,12 +55,12 @@ namespace danet
     /**
      * Każe menadżerowi sieci nasłuchiwać na danym IP i porcie.
      *
-     * @param acc Akceptor, który ma nasłuchiwać połączeń.
+     * @param adr Adres, na którym mamy słuchać
      * @return Zwraca uchwyt do akceptora.
      */
-    handle listen(acceptor *acc)
+    handle listen(address *adr, const P& passwd)
     {
-      return this->netbase::listen_at(acc);
+      return this->netbase::listen_at(adr, passwd.data());
     }
 
     /**
@@ -59,9 +69,9 @@ namespace danet
      * @param con Połączenie, które ma nawiązać.
      * @return Zwraca uchwyt do połączenia.
      */
-    handle connect(connection *con)
+    handle connect(address *adr, const P& passwd)
     {
-      return this->netbase::connect_to(con);
+      return this->netbase::connect_to(adr, passwd.data());
     }
 
     /**

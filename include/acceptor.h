@@ -13,8 +13,8 @@ namespace danet
   class acceptor;
 }
 
-#include "connection.h"
 #include "netbase.h"
+#include "connection.h"
 
 #include <boost/asio.hpp>
 
@@ -35,10 +35,10 @@ namespace danet
     // Musi być...
     netbase *nb;
 
-    boost::asio::io_service & get_ioservice()
+    /*boost::asio::io_service & get_ioservice()
     {
       return nb->service;
-    }
+    }*/
 
 
   };

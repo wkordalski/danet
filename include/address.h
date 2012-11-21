@@ -8,17 +8,19 @@
 #ifndef __DANET_ADDRESS_H
 #define	__DANTE_ADDRESS_H
 
+#include "netbase.h"
 #include "acceptor.h"
 #include "connection.h"
-#include "resolver.h"
 
 namespace danet
 {
   class address
   {
+    friend class netbase;
   public:
     virtual ~address() = 0;
 
+  protected:
     virtual danet::acceptor *    acceptor() = 0;
     virtual danet::connection *  connection() = 0;
   };
