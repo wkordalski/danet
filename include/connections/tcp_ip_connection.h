@@ -1,12 +1,8 @@
-/*
- * File:   tcp_ip_connection.h
- * Author: wojtex
- *
- * Created on 20 listopad 2012, 15:56
- */
-
 #ifndef __DANET_TCP_IP_CONNECTION_H
 #define	__DANET_TCP_IP_CONNECTION_H
+
+#include "connection.h"
+#include "acceptors/tcp_ip_acceptor.h"
 
 namespace danet
 {
@@ -14,22 +10,20 @@ namespace danet
   {
     namespace tcp
     {
-      class connection
+      class connection : public danet::connection
       {
-        friend class netbase;
-        friend class acceptor;
+        friend class danet::netbase;
+        friend class danet::ip::tcp::acceptor;
+        friend class danet::ip::tcp::address;
       public:
         virtual ~connection();
 
-        void listen();
-
-        //void close();
-        //void send(std::shared_ptr<std::vector<unsigned char>> data);
-        //void recv();
-
       protected:
-        connection(netbase *nb, std::string ip, int port);
+        connection(const danet::ip::tcp::address &adr);
         connection(netbase *nb);
+        virtual bool run(netbase *nb);
+
+        void listen();
 
         void on_connect(const boost::system::error_code &ec);
         void on_header(const boost::system::error_code &ec, const size_t &bt);
@@ -38,6 +32,9 @@ namespace danet
 
         // Netbase object pointer
         netbase *nb;
+
+        // Address to use
+        danet::ip::tcp::address adr;
 
         // Socket used to communicate with other machine
         boost::asio::ip::tcp::socket *sck;

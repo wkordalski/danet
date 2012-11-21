@@ -1,10 +1,3 @@
-/*
- * File:   acceptor.h
- * Author: wojtex
- *
- * Created on 11 listopad 2012, 16:48
- */
-
 #ifndef __DANET_ACCEPTOR_H
 #define	__DANET_ACCEPTOR_H
 
@@ -30,15 +23,15 @@ namespace danet
     virtual ~acceptor() = 0;
   private:
   protected:
-    virtual void run(netbase *nb) = 0;
+    virtual bool run(netbase *nb) = 0;
 
-    // Musi być...
+    // Netbase object pointer
     netbase *nb;
 
-    /*boost::asio::io_service & get_ioservice()
+    boost::asio::io_service & get_ioservice()
     {
       return nb->service;
-    }*/
+    }
 
 
   };

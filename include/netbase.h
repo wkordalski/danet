@@ -28,7 +28,6 @@ namespace danet
   protected:
     typedef unsigned int handle;
     typedef unsigned int user;
-    typedef boost::asio::ip::basic_resolver_entry<boost::asio::ip::tcp> address;
 
     netbase();
     netbase(const netbase& orig);
