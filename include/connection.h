@@ -35,6 +35,8 @@ namespace danet
     virtual bool run(netbase *nb) = 0;
     virtual void password(const std::vector<byte> &pwd) = 0;
 
+    virtual void send_data(const std::vector<byte> &data) = 0;
+
     // Netbase object pointer
     netbase *nb;
 

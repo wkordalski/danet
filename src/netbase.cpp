@@ -56,8 +56,13 @@ namespace danet
       // Nie udało się...
       return 0;
     }
-    this->acceptors.push_back(acc);
-    return (netbase::handle)(0xFFFFFFFF - this->acceptors.size() + 1);
+
+    acceptors_oid++;
+    if(acceptors_oid > 1000000000) acceptors_oid = 1;
+    while(acceptors.find(acceptors_oid) != acceptors.end()) acceptors_oid++;
+    acceptors[acceptors_oid] = acc;
+
+    return (netbase::handle)(0xFFFFFFFF - acceptors_oid);
   }
 
   netbase::handle netbase::connect_to(address* adr, const std::vector<byte>& pwd)
@@ -69,8 +74,39 @@ namespace danet
       // Nie udało się...
       return 0;
     }
-    this->connections.push_back(con);
-    return (netbase::handle)(this->connections.size());
+
+    connections_oid++;
+    if(connections_oid > 1000000000) connections_oid = 1;
+    while(connections.find(connections_oid) != connections.end()) connections_oid++;
+    connections[connections_oid] = con;
+
+    //this->connections.push_back(con);
+    return (netbase::handle)(connections_oid);
+  }
+
+  void netbase::close_resource(netbase::handle h)
+  {
+    if(h < 0x7FFFFFFF)
+    {
+      // Usuń połączenie...
+      int cid = h;
+      connections.erase(cid);
+    }
+    else
+    {
+      // Usuń akceptor...
+      int aid = (0xFFFFFFFF - h);
+      acceptors.erase(aid);
+    }
+  }
+
+  void netbase::send_to_resource(const std::vector<byte>& v, netbase::handle h)
+  {
+    if(h < 0x7FFFFFFF)
+    {
+      connections[h]->send_data(v);
+    }
+    // else invalid handle...
   }
 
 //  /*

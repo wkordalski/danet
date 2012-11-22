@@ -24,6 +24,8 @@ namespace danet
         virtual bool run(netbase *nb);
         virtual void password(const std::vector<byte>& passwd);
 
+        virtual void send_data(const std::vector<byte>& data);
+
         void listen();
 
         void on_connect(const boost::system::error_code &ec);

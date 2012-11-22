@@ -46,6 +46,7 @@ namespace danet
     void close_resource(handle h);
     void send_message(const std::vector<byte> &v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user &s);
+    void send_to_resource(const std::vector<byte> &v, handle h);
     std::vector<user> get_users_list();
 
     boost::asio::io_service & get_service()
@@ -85,8 +86,10 @@ protected:
     boost::asio::io_service service;
     boost::asio::io_service::work work;
     std::vector<std::thread *> workers;
-    std::vector<std::shared_ptr<acceptor>> acceptors;
-    std::vector<std::shared_ptr<connection>> connections;
+    std::map<int,std::shared_ptr<acceptor>> acceptors;
+    int acceptors_oid = 0;
+    std::map<int,std::shared_ptr<connection>> connections;
+    int connections_oid = 0;
   };
 }
 
