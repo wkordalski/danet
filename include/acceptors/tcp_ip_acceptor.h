@@ -21,7 +21,8 @@ namespace danet
         virtual ~acceptor();
       protected:
         acceptor(const danet::ip::tcp::address &adr);
-        bool run(netbase *nb);
+        virtual bool run(netbase *nb);
+        virtual void password(const std::vector<byte>& passwd);
         void accept();
         void on_accept(const boost::system::error_code & ec, std::shared_ptr<connection> con);
 

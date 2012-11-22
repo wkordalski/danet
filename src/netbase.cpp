@@ -1,50 +1,9 @@
 #include "netbase.h"
 
+#include "acceptor.h"
+#include "connection.h"
+
 using namespace std;
-
-namespace
-{
-  /*
-  inline void add2byte_vector(vector<byte> &v, int n)
-  {
-    v.resize(v.size() + n);
-  }
-
-  inline int set_int32_in_vector(int x, vector<byte> &v, int idx)
-  {
-    v[idx  ] = (x>>24)&0xFF;
-    v[idx+1] = (x>>16)&0xFF;
-    v[idx+2] = (x>> 8)&0xFF;
-    v[idx+3] = (x    )&0xFF;
-    return idx+4;
-  }
-
-  inline int set_string_in_vector(string s, vector<byte> &v, int idx)
-  {
-    for(char c : s)
-    {
-      v[idx++] = (byte)c;
-    }
-    return idx;
-  }
-
-  inline int get_int32_from_vector(int &x, vector<byte> &v, int idx)
-  {
-    x = ((int(v[idx]) << 24)|(int(v[idx+1]) << 16)|(int(v[idx+2]) << 8)|(int(v[idx+3])));
-    return idx+4;
-  }
-
-  inline int get_string_from_vector(string &s, vector<byte> &v, int idx, int ss)
-  {
-    s = "";
-    for(int i = 0; i < ss; i++)
-    {
-      s += (char)v[idx++];
-    }
-    return idx + ss;
-  }
-  */
-}
 
 namespace bnet = boost::asio;
 namespace bsys = boost::system;
@@ -86,6 +45,32 @@ namespace danet
         // Other exceptions - handle it! - and work then.
       }
     }
+  }
+
+  netbase::handle netbase::listen_at(address* adr, const std::vector<byte>& pwd)
+  {
+    shared_ptr<acceptor> acc = adr->acceptor();
+    acc->password(pwd);
+    if(!acc->run(this))
+    {
+      // Nie udało się...
+      return 0;
+    }
+    this->acceptors.push_back(acc);
+    return (netbase::handle)(0xFFFFFFFF - this->acceptors.size() + 1);
+  }
+
+  netbase::handle netbase::connect_to(address* adr, const std::vector<byte>& pwd)
+  {
+    shared_ptr<connection> con = adr->connection();
+    con->password(pwd);
+    if(!con->run(this))
+    {
+      // Nie udało się...
+      return 0;
+    }
+    this->connections.push_back(con);
+    return (netbase::handle)(this->connections.size());
   }
 
 //  /*

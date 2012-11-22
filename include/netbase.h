@@ -1,10 +1,15 @@
 #ifndef __DANET_NETBASE_H
 #define __DANET_NETBASE_H
 
+#include <vector>
+
 namespace danet
 {
   class netbase;
   typedef unsigned char byte;
+  class acceptor;
+  class connection;
+  typedef std::vector<byte> packet;
 }
 
 #include "address.h"
@@ -32,6 +37,7 @@ namespace danet
 
     netbase(std::shared_ptr<protocol> pro);
     netbase(const netbase&) = delete;
+    netbase(netbase &&nb) = delete;
     ~netbase();
 
   protected:
@@ -40,6 +46,7 @@ namespace danet
     void close_resource(handle h);
     void send_message(const std::vector<byte> &v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user &s);
+    std::vector<user> get_users_list();
 
     boost::asio::io_service & get_service()
     {
@@ -78,6 +85,8 @@ protected:
     boost::asio::io_service service;
     boost::asio::io_service::work work;
     std::vector<std::thread *> workers;
+    std::vector<std::shared_ptr<acceptor>> acceptors;
+    std::vector<std::shared_ptr<connection>> connections;
   };
 }
 

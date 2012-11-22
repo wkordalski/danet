@@ -55,7 +55,7 @@ namespace danet
      */
     handle listen(address *adr, const P& passwd)
     {
-      return this->netbase::listen_at(adr, passwd.data());
+      return this->listen_at(adr, passwd.data());
     }
 
     /**
@@ -67,7 +67,7 @@ namespace danet
      */
     handle connect(address *adr, const P& passwd)
     {
-      return this->netbase::connect_to(adr, passwd.data());
+      return this->connect_to(adr, passwd.data());
     }
 
     /**
@@ -77,7 +77,7 @@ namespace danet
      */
     void close(handle h)
     {
-      this->netbase::close_resource(h);
+      this->close_resource(h);
     }
 
     /**
@@ -88,7 +88,7 @@ namespace danet
      */
     void send(const T &m, const std::vector<user> &s)
     {
-      this->netbase::send_message(T::get_data(m), s);
+      this->send_message(T::get_data(m), s);
     }
 
     /**
@@ -101,10 +101,15 @@ namespace danet
     {
       user uid = 0;
       std::vector<byte> v;
-      this->netbase::recv_message(v, uid);
+      this->recv_message(v, uid);
       if(uid > 0)
         m = T::set_data(v);
       return uid;
+    }
+
+    std::vector<user> users()
+    {
+      return this->get_users_list();
     }
   };
 }

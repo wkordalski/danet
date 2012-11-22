@@ -22,6 +22,7 @@ namespace danet
         connection(const danet::ip::tcp::address &adr);
         connection(netbase *nb);
         virtual bool run(netbase *nb);
+        virtual void password(const std::vector<byte>& passwd);
 
         void listen();
 
