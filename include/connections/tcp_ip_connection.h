@@ -38,7 +38,7 @@ namespace danet
         void on_hsend(const boost::system::error_code &ec, const size_t &bt);
 
         // Netbase object pointer
-        netbase *nb;
+        //netbase *nb;
 
         // Address to use
         danet::ip::tcp::address adr;
@@ -49,6 +49,7 @@ namespace danet
         // Buffer for header
         byte rcv_b[8];
         std::vector<byte> rcv_d;
+        std::mutex rcv_m;
 
         // Strands
         boost::asio::strand *strd_r;      // Reading strand

@@ -14,6 +14,9 @@ namespace danet
   {
     // Dodaj wątek
     workers.push_back(new thread(bind(&netbase::io_worker, this)));
+    workers.push_back(new thread(bind(&netbase::io_worker, this)));
+    workers.push_back(new thread(bind(&netbase::io_worker, this)));
+    workers.push_back(new thread(bind(&netbase::io_worker, this)));
     this->proto = pro;
     // TODO
   }
@@ -55,6 +58,7 @@ namespace danet
     if(!acc->run(this))
     {
       // Nie udało się...
+      // Lub rzuć wyjątek
       return 0;
     }
 
@@ -73,6 +77,7 @@ namespace danet
     if(!con->run(this))
     {
       // Nie udało się...
+      // Lub rzuć wyjątek
       return 0;
     }
 

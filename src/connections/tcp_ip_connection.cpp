@@ -29,6 +29,7 @@ namespace danet
       {
         delete sck;
         delete strd_r;
+        delete strd_w;
       }
 
       bool connection::run(netbase *nb)
@@ -69,7 +70,9 @@ namespace danet
 
       void connection::recv()
       {
+        rcv_m.lock();
         bnet::async_read(*(this->sck),bnet::buffer(rcv_b, 4),strd_r->wrap(bind(&connection::on_header, this, placeholders::_1, placeholders::_2)));
+        rcv_m.unlock();
       }
 
       void connection::send_data(shared_ptr<packet> data)
@@ -127,6 +130,7 @@ namespace danet
 
       void connection::on_header(const boost::system::error_code& ec, const size_t& bt)
       {
+        rcv_m.lock();
         if(ec)
         {
           // Błąd przy odbieraniu nagłówka danych
@@ -141,15 +145,23 @@ namespace danet
         //rcv_d.clear();
         rcv_d.resize(msgsiz);
         bnet::async_read(*(this->sck),bnet::buffer(rcv_d),strd_r->wrap(bind(&connection::on_body, this, placeholders::_1, placeholders::_2)));
+        rcv_m.unlock();
       }
 
       void connection::on_body(const boost::system::error_code& ec, const size_t& bt)
       {
+        rcv_m.lock();
         if(ec)
         {
           // Błąd przy odbieraniu danych
         }
         this->forward_protocol(rcv_d);
+        rcv_m.unlock();
+      }
+
+      void connection::password(const std::vector<byte>& passwd)
+      {
+        // TODO
       }
     }
   }

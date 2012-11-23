@@ -5,6 +5,10 @@ find_package( Boost COMPONENTS system REQUIRED )
 
 find_package (Threads)
 
+# DEBUG & RELEASE
+set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} -Wall -g")
+set(CMAKE_CSS_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
+
 add_definitions("-std=c++11")
 
 include_directories(
