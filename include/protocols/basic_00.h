@@ -29,6 +29,8 @@ namespace danet
 
     protected:
       basic();
+
+      virtual void data_received(packet &pkg);
     };
   }
 }

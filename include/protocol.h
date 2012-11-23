@@ -3,10 +3,22 @@
 
 namespace danet
 {
+  class protocol;
+}
+
+#include "netbase.h"
+
+namespace danet
+{
+  class connection;
+
   class protocol
   {
+    friend class connection;
   public:
     virtual ~protocol() {};
+  protected:
+    virtual void data_received(packet &pkg) = 0;
   };
 }
 

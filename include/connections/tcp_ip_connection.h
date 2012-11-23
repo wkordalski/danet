@@ -24,14 +24,18 @@ namespace danet
         virtual bool run(netbase *nb);
         virtual void password(const std::vector<byte>& passwd);
 
-        virtual void send_data(const std::vector<byte>& data);
+        virtual void send_data(std::shared_ptr<packet> data);
 
         void listen();
+
+        void recv();
+        void send();
 
         void on_connect(const boost::system::error_code &ec);
         void on_header(const boost::system::error_code &ec, const size_t &bt);
         void on_body(const boost::system::error_code &ec, const size_t &bt);
-        void on_send(const boost::system::error_code &ec);
+        void on_send(const boost::system::error_code &ec, const size_t &bt);
+        void on_hsend(const boost::system::error_code &ec, const size_t &bt);
 
         // Netbase object pointer
         netbase *nb;
@@ -43,14 +47,17 @@ namespace danet
         boost::asio::ip::tcp::socket *sck;
 
         // Buffer for header
-        byte header_buff[8];
+        byte rcv_b[8];
+        std::vector<byte> rcv_d;
 
         // Strands
         boost::asio::strand *strd_r;      // Reading strand
         boost::asio::strand *strd_w;      // Writing strand
 
-        //std::queue<std::shared_ptr<std::vector<unsigned char>>> sndq;
-        //std::mutex sndm;
+        // Kolejka danych wysyłanych i jej mutex
+        std::queue<std::shared_ptr<packet>> snd_q;
+        std::mutex snd_m;
+        byte snd_b[4];
 
         //unsigned char head[8];
         //std::vector<unsigned char> buff;

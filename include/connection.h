@@ -35,7 +35,7 @@ namespace danet
     virtual bool run(netbase *nb) = 0;
     virtual void password(const std::vector<byte> &pwd) = 0;
 
-    virtual void send_data(const std::vector<byte> &data) = 0;
+    virtual void send_data(std::shared_ptr<packet> data) = 0;
 
     // Netbase object pointer
     netbase *nb;
@@ -43,6 +43,11 @@ namespace danet
     boost::asio::io_service & get_ioservice()
     {
       return nb->service;
+    }
+
+    void forward_protocol(packet &pkg)
+    {
+      return nb->proto->data_received(pkg);
     }
 
   private:

@@ -14,6 +14,7 @@ namespace danet
   {
     // Dodaj wątek
     workers.push_back(new thread(bind(&netbase::io_worker, this)));
+    this->proto = pro;
     // TODO
   }
 
@@ -100,7 +101,7 @@ namespace danet
     }
   }
 
-  void netbase::send_to_resource(const std::vector<byte>& v, netbase::handle h)
+  void netbase::send_to_resource(std::shared_ptr<packet> v, netbase::handle h)
   {
     if(h < 0x7FFFFFFF)
     {
