@@ -51,7 +51,21 @@ namespace danet
 
       void connection::on_connect(const boost::system::error_code& ec)
       {
-        // TODO
+        if(ec)
+        {
+          // TODO: Jakiś błąd...
+        }
+        // TODO: rób co trzeba
+        this->listen();
+      }
+
+      void connection::listen()
+      {
+        this->sck->async_read_some(boost::asio::buffer(header_buff, 4), bind(&connection::on_header), this, placeholders::_1, placeholders::_2);
+        //if(coś w kolejce)
+        //{
+        //  this->sck->async_write_some(boost::asio::buffer(header_buff, 4), bind(&connection::on_header), this, placeholders::_1, placeholders::_2);
+        //}
       }
     }
   }

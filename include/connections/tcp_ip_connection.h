@@ -46,9 +46,9 @@ namespace danet
         byte header_buff[8];
 
         // Strands
-        boost::asio::strand *strd_r;     // Reading strand
-        //boost::asio::strand strda;    // Send
-        //boost::asio::strand strdb;    // Recv
+        boost::asio::strand *strd_r;      // Reading strand
+        boost::asio::strand *strd_w;      // Writing strand
+
         //std::queue<std::shared_ptr<std::vector<unsigned char>>> sndq;
         //std::mutex sndm;
 

@@ -57,19 +57,20 @@ namespace danet
       void acceptor::accept()
       {
         // Stwórz nowe połączeie.
-        shared_ptr<danet::ip::tcp::connection> nextcon(new connection(nb));
+        shared_ptr<danet::ip::tcp::connection> nextcon(new danet::ip::tcp::connection(nb));
 
         // Akceptuj kolejne połączenie
         acc->async_accept(*(nextcon->sck), std::bind(&acceptor::on_accept, this, std::placeholders::_1, nextcon));
       }
 
-      void acceptor::on_accept(const boost::system::error_code& ec, std::shared_ptr<connection> con)
+      void acceptor::on_accept(const boost::system::error_code& ec, std::shared_ptr<danet::ip::tcp::connection> con)
       {
         if(ec)
         {
           // TODO: jakieś błąd akceptacji
         }
         // TODO: co robić, gdy zaakceptowano
+        con->listen();
       }
     }
   }
