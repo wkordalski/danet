@@ -4,8 +4,9 @@ namespace danet
 {
   namespace protocols
   {
-    basic<0>::basic()
+    basic<0>::basic(int rts)
     {
+      this->rts = rts;
       // TODO: Implementation
     }
 

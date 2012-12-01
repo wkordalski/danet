@@ -22,15 +22,22 @@ namespace danet
     public:
       virtual ~basic();
 
-      static std::shared_ptr<protocol> create()
+      /**
+       * Creates new protocol instance
+       * @param rts Routing Table maximum size (-1 is unlimited)
+       * @return The shared pointer to protocol instance.
+       */
+      static std::shared_ptr<protocol> create(int rts)
       {
-        return std::shared_ptr<protocol>(new basic<0>());
+        return std::shared_ptr<protocol>(new basic<0>(rts));
       }
 
     protected:
-      basic();
+      basic(int rts);
 
       virtual void data_received(packet &pkg);
+
+      int rts;
     };
   }
 }

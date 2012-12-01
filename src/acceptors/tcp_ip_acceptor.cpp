@@ -71,11 +71,17 @@ namespace danet
         }
         // TODO: co robić, gdy zaakceptowano
         con->listen();
+        this->accept();
       }
 
       void acceptor::password(const std::vector<byte>& passwd)
       {
-        // TODO
+        this->pwd = passwd;
+      }
+
+      vector<byte> & acceptor::password()
+      {
+        return this->pwd;
       }
     }
   }
