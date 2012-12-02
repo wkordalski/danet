@@ -163,10 +163,6 @@ namespace danet
         {
           // Błąd przy odbieraniu danych
         }
-        //cout << "R: ";
-        //for(byte b : rcv_d)
-        //  cout << (int)b << " ";
-        //cout << "\n";
         this->forward_protocol(rcv_d);
         rcv_m.unlock();
         this->recv();

@@ -13,11 +13,9 @@ namespace danet
 }
 
 #include "address.h"
-#include "protocol.h"
 
 #include <boost/asio.hpp>
 
-#include <condition_variable>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -29,12 +27,14 @@ namespace danet
 
 namespace danet
 {
+  class protocol;
   class netbase
   {
-  protected:
-    typedef unsigned int handle;
+  public:
     typedef unsigned int user;
+    typedef unsigned int handle;
 
+  protected:
     netbase(std::shared_ptr<protocol> pro);
     netbase(const netbase&) = delete;
     netbase(netbase &&nb) = delete;
@@ -45,9 +45,10 @@ namespace danet
     handle connect_to(address *adr, const std::vector<byte>& pwd);
     void close_resource(handle h);
     void send_message(const std::vector<byte> &v, const std::vector<user> &s);
-    void recv_message(std::vector<byte> &v, user &s);
+    void recv_message(std::vector<byte> &v, user s);
     void send_to_resource(std::shared_ptr<packet> v, handle h);
     std::vector<user> get_users_list();
+    void message_received(packet &p, user s);
 
     boost::asio::io_service & get_service()
     {
@@ -61,6 +62,7 @@ protected:
 
     friend class connection;
     friend class acceptor;
+    friend class danet::protocol;
 
     //void received(message msg);
     //void accepted(const boost::system::error_code & ec, std::shared_ptr<connection>);
@@ -92,6 +94,9 @@ protected:
     int connections_oid = 0;
 
     std::shared_ptr<danet::protocol> proto;
+
+    std::queue<std::pair<int,packet>> msgs;
+    std::mutex msgs_m;
   };
 }
 

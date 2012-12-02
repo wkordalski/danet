@@ -14,6 +14,7 @@ namespace danet
 }
 
 #include "netbase.h"
+#include "protocol.h"
 #include "acceptor.h"
 
 #include <boost/asio.hpp>

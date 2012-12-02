@@ -17,6 +17,7 @@ namespace danet
     workers.push_back(new thread(bind(&netbase::io_worker, this)));
     workers.push_back(new thread(bind(&netbase::io_worker, this)));
     workers.push_back(new thread(bind(&netbase::io_worker, this)));
+    pro->nb = this;
     this->proto = pro;
     // TODO
   }
@@ -87,6 +88,7 @@ namespace danet
     connections[connections_oid] = con;
 
     //this->connections.push_back(con);
+    this->proto->add_connection((netbase::handle)connections_oid);
     return (netbase::handle)(connections_oid);
   }
 
@@ -113,6 +115,22 @@ namespace danet
       connections[h]->send_data(v);
     }
     // else invalid handle...
+  }
+
+  void netbase::recv_message(packet& v, user s)
+  {
+    msgs_m.lock();
+    v = move(msgs.front().second);
+    s = msgs.front().first;
+    msgs.pop();
+    msgs_m.unlock();
+  }
+
+  void netbase::message_received(packet& p, user s)
+  {
+    msgs_m.lock();
+    msgs.push(pair<int,packet>(s, move(p)));
+    msgs_m.unlock();
   }
 
 //  /*
@@ -526,13 +544,6 @@ namespace danet
 //        strda.wrap(boost::bind(&connection::on_send, this, _1)));
 //    }
 //    sndm.unlock();
-//  }
-//
-//  void network::connection::recv()
-//  {
-//    rcvm.lock();
-//    cs = ct = cr = 0;
-//    sock.async_read_some(boost::asio::buffer(head, 8), strdb.wrap(bind(&connection::on_head, this, _1, _2)));
 //  }
 //
 //  void network::connection::on_head(const boost::system::error_code &ec, const size_t &bt)
