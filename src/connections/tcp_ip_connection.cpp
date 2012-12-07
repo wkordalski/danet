@@ -167,11 +167,6 @@ namespace danet
         rcv_m.unlock();
         this->recv();
       }
-
-      void connection::password(const std::vector<byte>& passwd)
-      {
-        // TODO
-      }
     }
   }
 }

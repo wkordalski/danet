@@ -22,7 +22,7 @@ namespace danet
    * @param P Typ reprezentujący hasło przy łączeniu z siecią.
    * Musi zawierać funkcję data.
    */
-  template<class T, class P>
+  template<class T>
   class network : protected netbase
   {
   public:
@@ -44,30 +44,28 @@ namespace danet
 
     }
 
-    network(const network<T,P> &) = delete;
+    network(const network<T> &) = delete;
 
     /**
      * Każe menadżerowi sieci nasłuchiwać na danym IP i porcie.
      *
      * @param adr Adres, na którym mamy słuchać
-     * @param passwd Hasło do sieci
      * @return Zwraca uchwyt do akceptora.
      */
-    handle listen(address *adr, const P& passwd)
+    handle listen(address *adr)
     {
-      return this->listen_at(adr, passwd.data());
+      return this->listen_at(adr);
     }
 
     /**
      * Każe menadżerowi sieci połączyć się z danym IP i portem.
      *
      * @param adr Adres, do którego mamy się podłączyć
-     * @param passwd Hasło do sieci
      * @return Zwraca uchwyt do połączenia.
      */
-    handle connect(address *adr, const P& passwd)
+    handle connect(address *adr)
     {
-      return this->connect_to(adr, passwd.data());
+      return this->connect_to(adr);
     }
 
     /**

@@ -52,10 +52,9 @@ namespace danet
     }
   }
 
-  netbase::handle netbase::listen_at(address* adr, const std::vector<byte>& pwd)
+  netbase::handle netbase::listen_at(address* adr)
   {
     shared_ptr<acceptor> acc = adr->acceptor();
-    acc->password(pwd);
     if(!acc->run(this))
     {
       // Nie udało się...
@@ -71,10 +70,9 @@ namespace danet
     return (netbase::handle)(0xFFFFFFFF - acceptors_oid);
   }
 
-  netbase::handle netbase::connect_to(address* adr, const std::vector<byte>& pwd)
+  netbase::handle netbase::connect_to(address* adr)
   {
     shared_ptr<connection> con = adr->connection();
-    con->password(pwd);
     if(!con->run(this))
     {
       // Nie udało się...

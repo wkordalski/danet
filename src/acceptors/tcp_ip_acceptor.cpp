@@ -73,16 +73,6 @@ namespace danet
         con->listen();
         this->accept();
       }
-
-      void acceptor::password(const std::vector<byte>& passwd)
-      {
-        this->pwd = passwd;
-      }
-
-      vector<byte> & acceptor::password()
-      {
-        return this->pwd;
-      }
     }
   }
 }

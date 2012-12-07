@@ -34,7 +34,6 @@ namespace danet
 
   protected:
     virtual bool run(netbase *nb) = 0;
-    virtual void password(const std::vector<byte> &pwd) = 0;
 
     virtual void send_data(std::shared_ptr<packet> data) = 0;
 

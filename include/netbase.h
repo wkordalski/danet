@@ -41,8 +41,8 @@ namespace danet
     ~netbase();
 
   protected:
-    handle listen_at(address *adr, const std::vector<byte>& pwd);
-    handle connect_to(address *adr, const std::vector<byte>& pwd);
+    handle listen_at(address *adr);
+    handle connect_to(address *adr);
     void close_resource(handle h);
     void send_message(const std::vector<byte> &v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user s);
