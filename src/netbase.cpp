@@ -142,25 +142,10 @@ namespace danet
 //  */
 //  /*
 //   * DEPRECED
-//  void network::create()
-//  {
-//    myid = 0;
-//    state = 2;    // OK!
-//    // Uruchom serwer - TODO
-//    add_worker(2);
 //
-//
-//
-//    // Inicjalizacja reszty
-//  }
 //  */
 //  /*
-//  // Nasłuchuje na interfejsie
-//  void network::listen(string ip, int port)
-//  {
-//    // ...
-//  }
-//  */
+//  //  */
 //  //
 //  // Łączy z siecią
 //  //
