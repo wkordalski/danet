@@ -21,7 +21,7 @@ namespace danet
   protected:
     // Komendy od netbase
     virtual void data_received(packet &pkg) = 0;
-    virtual void send_data(packet &p, std::vector<netbase::user> &u) = 0;
+    virtual void send_data(packet p, const std::vector<netbase::user> &u) = 0;
     virtual void add_connection(netbase::handle h) = 0;
     virtual void rem_connection(netbase::handle h) = 0;
 

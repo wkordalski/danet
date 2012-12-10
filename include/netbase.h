@@ -44,7 +44,7 @@ namespace danet
     handle listen_at(address *adr);
     handle connect_to(address *adr);
     void close_resource(handle h);
-    void send_message(const std::vector<byte> &v, const std::vector<user> &s);
+    void send_message(std::vector<byte> v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user s);
     void send_to_resource(std::shared_ptr<packet> v, handle h);
     std::vector<user> get_users_list();

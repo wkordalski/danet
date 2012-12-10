@@ -131,6 +131,11 @@ namespace danet
     msgs_m.unlock();
   }
 
+  void netbase::send_message(std::vector<byte> v, const std::vector<user>& s)
+  {
+    this->proto->send_data(v,s);
+  }
+
 //  /*
 //  // NETWORK CLASS /////////////////////////////////////////////////////////////
 //

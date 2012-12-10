@@ -47,7 +47,7 @@ namespace danet
       }
     }
 
-    void basic<0>::send_data(packet& p, std::vector<netbase::user>& u)
+    void basic<0>::send_data(packet p, const std::vector<netbase::user>& u)
     {
       // Stwórz pakiet do wysłania i wyślij do handle
       //this->add_message_sending(pakiet, uchwyt)
@@ -60,7 +60,7 @@ namespace danet
 
     void basic<0>::rem_connection(netbase::handle h)
     {
-      
+
     }
   }
 }
