@@ -69,7 +69,7 @@ namespace danet
         {
           // TODO: jakieś błąd akceptacji
         }
-        // TODO: co robić, gdy zaakceptowano
+        con->run(this->connection_add(con));
         con->listen();
         this->accept();
       }

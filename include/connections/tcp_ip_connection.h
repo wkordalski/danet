@@ -21,9 +21,12 @@ namespace danet
       protected:
         connection(const danet::ip::tcp::address &adr);
         connection(netbase *nb);
-        virtual bool run(netbase *nb);
+        virtual bool run(netbase *nb, netbase::handle id);
+        virtual bool run(netbase::handle id);
 
         virtual void send_data(std::shared_ptr<packet> data);
+
+        virtual std::shared_ptr<danet::address> get_address();
 
         void listen();
 

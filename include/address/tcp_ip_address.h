@@ -24,6 +24,7 @@ namespace danet
       public:
         address(std::string ip, int port);
         ~address();
+        bool valid();
 
       protected:
         address();

@@ -33,12 +33,18 @@ namespace danet
     virtual ~connection() {};
 
   protected:
-    virtual bool run(netbase *nb) = 0;
+    virtual bool run(netbase *nb, netbase::handle id) = 0;
+    virtual bool run(netbase::handle id) = 0;
 
     virtual void send_data(std::shared_ptr<packet> data) = 0;
 
+    virtual std::shared_ptr<danet::address> get_address() = 0;
+
     // Netbase object pointer
     netbase *nb;
+
+    // Connection id
+    netbase::handle id;
 
     boost::asio::io_service & get_ioservice()
     {
@@ -48,6 +54,21 @@ namespace danet
     void forward_protocol(packet &pkg)
     {
       return nb->proto->data_received(pkg);
+    }
+
+    void connection_add()
+    {
+      return nb->proto->add_connection(id);
+    }
+
+    void connection_rem()
+    {
+      return nb->proto->rem_connection(id);
+    }
+
+    void cancel_connection()
+    {
+      nb->rem_connection(id);
     }
 
   private:

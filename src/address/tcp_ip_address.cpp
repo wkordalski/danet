@@ -41,6 +41,13 @@ namespace danet
         return shared_ptr<danet::connection>(new danet::ip::tcp::connection(*this));
       }
 
+      bool address::valid()
+      {
+        if(this->port == -1) return false;
+        if(this->ip == "") return false;
+        return true;
+      }
+
 //      address::phys_addr address::resolve(netbase *nb)
 //      {
 //        bnet::ip::tcp::resolver resolver(nb->get_service());

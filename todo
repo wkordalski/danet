@@ -1,0 +1,10 @@
+Teraz:
+> protokół testowy (przesyłanie danych przez jedno połączenie)
+
+Wersja 0.1:
+> wydajność (funkcje inline oraz przekazywanie argumentów)
+> protokół podstawowy (dodawanie/usuwanie połączeń, przesyłanie danych przez sieć)
+> porządek w kodzie - udokumentowanie
+
+Wersja 1.0
+> wrapper do Pythona

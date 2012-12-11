@@ -22,20 +22,17 @@ namespace danet
       {
         this->nb = nb;
         sck = new boost::asio::ip::tcp::socket(this->get_ioservice());
-        //strd_r = new boost::asio::strand(this->get_ioservice());
-        //strd_w = new boost::asio::strand(this->get_ioservice());
       }
 
       connection::~connection()
       {
         delete sck;
-        //delete strd_r;
-        //delete strd_w;
       }
 
-      bool connection::run(netbase *nb)
+      bool connection::run(netbase *nb, netbase::handle id)
       {
         this->nb = nb;
+        this->id = id;
 
         bsys::error_code ec;
 
@@ -53,13 +50,20 @@ namespace danet
         return true;
       }
 
+      bool connection::run(netbase::handle id)
+      {
+        this->id = id;
+        return true;
+      }
+
       void connection::on_connect(const boost::system::error_code& ec)
       {
         if(ec)
         {
-          // TODO: Jakiś błąd...
+          this->cancel_connection();
+          return;
         }
-        // TODO: rób co trzeba
+        this->connection_add();
         this->listen();
       }
 
@@ -103,7 +107,7 @@ namespace danet
         snd_m.lock();
         if(ec)
         {
-          // Błąd przy wysyłaniu nagłówka... (w miejscu bt)
+          // TODO: Błąd przy wysyłaniu nagłówka... (w miejscu bt)
         }
         bnet::async_write(*(this->sck),bnet::buffer(*(snd_q.front()), snd_q.front()->size()), /*strd_w->wrap(*/bind(&connection::on_send, this, placeholders::_1, placeholders::_2)/*)*/);
         snd_m.lock();
@@ -114,7 +118,7 @@ namespace danet
         snd_m.lock();
         if(ec)
         {
-          // Błąd przy wysyłaniu danych... (w miejscu bt)
+          // TODO: Błąd przy wysyłaniu danych... (w miejscu bt)
         }
         snd_q.pop();
         if(!snd_q.empty())
@@ -134,7 +138,7 @@ namespace danet
         rcv_m.lock();
         if(ec)
         {
-          // Błąd przy odbieraniu nagłówka danych
+          // TODO: Błąd przy odbieraniu nagłówka danych
         }
         unsigned int msgsiz = 0;
         for(byte b: rcv_b)
@@ -161,11 +165,16 @@ namespace danet
         rcv_m.lock();
         if(ec)
         {
-          // Błąd przy odbieraniu danych
+          // TODO: Błąd przy odbieraniu danych
         }
         this->forward_protocol(rcv_d);
         rcv_m.unlock();
         this->recv();
+      }
+
+      shared_ptr<danet::address> connection::get_address()
+      {
+        return shared_ptr<danet::address>(new danet::ip::tcp::address(this->adr));
       }
     }
   }

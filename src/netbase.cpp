@@ -73,21 +73,18 @@ namespace danet
   netbase::handle netbase::connect_to(address* adr)
   {
     shared_ptr<connection> con = adr->connection();
-    if(!con->run(this))
+
+    netbase::handle h = this->add_connection(con);
+
+    if(!con->run(this, h))
     {
-      // Nie udało się...
-      // Lub rzuć wyjątek
       return 0;
     }
 
-    connections_oid++;
-    if(connections_oid > 1000000000) connections_oid = 1;
-    while(connections.find(connections_oid) != connections.end()) connections_oid++;
-    connections[connections_oid] = con;
 
     //this->connections.push_back(con);
-    this->proto->add_connection((netbase::handle)connections_oid);
-    return (netbase::handle)(connections_oid);
+    //this->proto->add_connection((netbase::handle)connections_oid); <- ŹLE
+    return (netbase::handle)(h);
   }
 
   void netbase::close_resource(netbase::handle h)
@@ -115,12 +112,15 @@ namespace danet
     // else invalid handle...
   }
 
-  void netbase::recv_message(packet& v, user s)
+  void netbase::recv_message(packet& v, user& s)
   {
     msgs_m.lock();
-    v = move(msgs.front().second);
-    s = msgs.front().first;
-    msgs.pop();
+    if(!msgs.empty())
+    {
+      v = move(msgs.front().second);
+      s = msgs.front().first;
+      msgs.pop();
+    }
     msgs_m.unlock();
   }
 
@@ -134,6 +134,25 @@ namespace danet
   void netbase::send_message(std::vector<byte> v, const std::vector<user>& s)
   {
     this->proto->send_data(v,s);
+  }
+
+  netbase::handle netbase::add_connection(std::shared_ptr<connection> con)
+  {
+    connections_m.lock();
+    connections_oid++;
+    if(connections_oid > 1000000000) connections_oid = 1;
+    while(connections.find(connections_oid) != connections.end()) connections_oid++;
+    connections[connections_oid] = con;
+    netbase::handle h = connections_oid;
+    connections_m.unlock();
+    return h;
+  }
+
+  void netbase::rem_connection(handle h)
+  {
+    connections_m.lock();
+    connections.erase(h);
+    connections_m.unlock();
   }
 
 //  /*
