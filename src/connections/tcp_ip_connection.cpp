@@ -83,8 +83,10 @@ namespace danet
       void connection::send_data(shared_ptr<packet> data)
       {
         snd_m.lock();
+        bool emptst = snd_q.empty();
         this->snd_q.push(data);
         snd_m.unlock();
+        if(emptst) this->send();
       }
 
       void connection::send()
@@ -93,11 +95,15 @@ namespace danet
         if(!snd_q.empty())
         {
           unsigned int msize = snd_q.front()->size();
-          this->snd_b[3] = ((msize      ) & 0xFF);
-          this->snd_b[2] = ((msize >>  8) & 0xFF);
-          this->snd_b[1] = ((msize >> 16) & 0xFF);
+          this->snd_b[6] = ((msize      ) & 0xFF);
+          this->snd_b[4] = ((msize >>  8) & 0xFF);
+          this->snd_b[2] = ((msize >> 16) & 0xFF);
           this->snd_b[0] = ((msize >> 24) & 0xFF);
-          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 4), bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2));
+          this->snd_b[7] = ~this->snd_b[6];
+          this->snd_b[5] = ~this->snd_b[4];
+          this->snd_b[3] = ~this->snd_b[2];
+          this->snd_b[1] = ~this->snd_b[0];
+          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 8), bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2));
         }
         snd_m.unlock();
       }
@@ -109,7 +115,7 @@ namespace danet
         {
           // TODO: Błąd przy wysyłaniu nagłówka... (w miejscu bt)
         }
-        bnet::async_write(*(this->sck),bnet::buffer(*(snd_q.front()), snd_q.front()->size()), /*strd_w->wrap(*/bind(&connection::on_send, this, placeholders::_1, placeholders::_2)/*)*/);
+        bnet::async_write(*(this->sck),bnet::buffer(*(snd_q.front()), snd_q.front()->size()), bind(&connection::on_send, this, placeholders::_1, placeholders::_2));
         snd_m.lock();
       }
 
@@ -124,11 +130,15 @@ namespace danet
         if(!snd_q.empty())
         {
           unsigned int msize = snd_q.front()->size();
-          this->snd_b[3] = ((msize      ) & 0xFF);
-          this->snd_b[2] = ((msize >>  8) & 0xFF);
-          this->snd_b[1] = ((msize >> 16) & 0xFF);
+          this->snd_b[6] = ((msize      ) & 0xFF);
+          this->snd_b[4] = ((msize >>  8) & 0xFF);
+          this->snd_b[2] = ((msize >> 16) & 0xFF);
           this->snd_b[0] = ((msize >> 24) & 0xFF);
-          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 4), /*strd_w->wrap(*/bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2)/*)*/);
+          this->snd_b[7] = ~this->snd_b[6];
+          this->snd_b[5] = ~this->snd_b[4];
+          this->snd_b[3] = ~this->snd_b[2];
+          this->snd_b[1] = ~this->snd_b[0];
+          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 8), bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2));
         }
         snd_m.unlock();
       }
@@ -141,10 +151,24 @@ namespace danet
           // TODO: Błąd przy odbieraniu nagłówka danych
         }
         unsigned int msgsiz = 0;
+        bool now = true;
+        byte last = 0;
         for(byte b: rcv_b)
         {
-          msgsiz <<= 8;
-          msgsiz |= (unsigned int)b;
+          if(now)
+          {
+            msgsiz <<= 8;
+            msgsiz |= (unsigned int)b;
+            last = b;
+          }
+          else
+          {
+            if(~b != last)
+            {
+              // TODO: ERROR
+            }
+          }
+          now ~= now;
         }
         // <odbierz dane pakietu>
         //rcv_d.clear();

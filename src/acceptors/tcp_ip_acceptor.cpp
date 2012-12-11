@@ -68,10 +68,18 @@ namespace danet
         if(ec)
         {
           // TODO: jakieś błąd akceptacji
+          return;
         }
-        con->run(this->connection_add(con));
+        netbase::handle h = this->apply_connection(con);
+        con->run(h);
         con->listen();
+        this->connection_add(h);
         this->accept();
+      }
+
+      shared_ptr<danet::address> acceptor::get_address()
+      {
+        return shared_ptr<danet::address>(new danet::ip::tcp::address(this->adr));
       }
     }
   }

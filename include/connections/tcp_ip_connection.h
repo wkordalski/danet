@@ -53,10 +53,6 @@ namespace danet
         std::vector<byte> rcv_d;
         std::mutex rcv_m;
 
-        // Strands
-        boost::asio::strand *strd_r;      // Reading strand
-        boost::asio::strand *strd_w;      // Writing strand
-
         // Kolejka danych wysyłanych i jej mutex
         std::queue<std::shared_ptr<packet>> snd_q;
         std::mutex snd_m;

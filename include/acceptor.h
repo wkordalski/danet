@@ -24,6 +24,7 @@ namespace danet
   private:
   protected:
     virtual bool run(netbase *nb) = 0;
+    virtual std::shared_ptr<danet::address> get_address() = 0;
 
     // Netbase object pointer
     netbase *nb;
@@ -33,9 +34,14 @@ namespace danet
       return nb->service;
     }
 
-    netbase::handle connection_add(std::shared_ptr<connection> con)
+    netbase::handle apply_connection(std::shared_ptr<connection> con)
     {
       return this->nb->add_connection(con);
+    }
+
+    void connection_add(netbase::handle h)
+    {
+      return nb->proto->add_connection(h);
     }
 
 

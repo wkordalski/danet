@@ -57,8 +57,6 @@ namespace danet
     shared_ptr<acceptor> acc = adr->acceptor();
     if(!acc->run(this))
     {
-      // Nie udało się...
-      // Lub rzuć wyjątek
       return 0;
     }
 
@@ -89,6 +87,7 @@ namespace danet
 
   void netbase::close_resource(netbase::handle h)
   {
+    // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
       // Usuń połączenie...
@@ -105,6 +104,7 @@ namespace danet
 
   void netbase::send_to_resource(std::shared_ptr<packet> v, netbase::handle h)
   {
+    // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
       connections[h]->send_data(v);
@@ -150,6 +150,7 @@ namespace danet
 
   void netbase::rem_connection(handle h)
   {
+    // TODO: A co jeśli uchwyt jest niepoprawny?
     connections_m.lock();
     connections.erase(h);
     connections_m.unlock();
