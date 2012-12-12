@@ -8,10 +8,15 @@
 
 using namespace std;
 
+int prt;
+
 int main()
 {
+  cout << "Port: ";
+  cin >> prt;
+  cin.ignore();
   danet::network<msg> n(danet::protocols::basic<0>::create(-1));
-  danet::ip::tcp::address adr("127.0.0.1", 7777);
+  danet::ip::tcp::address adr("127.0.0.1", prt);
   if(!n.listen(&adr))
   {
     cerr << "Listen error" << endl;

@@ -1,7 +1,6 @@
 #include "netbase.h"
 #include "connections/tcp_ip_connection.h"
 
-#include <iostream>
 #include <string>
 
 using namespace std;
@@ -95,15 +94,11 @@ namespace danet
         if(!snd_q.empty())
         {
           unsigned int msize = snd_q.front()->size();
-          this->snd_b[6] = ((msize      ) & 0xFF);
-          this->snd_b[4] = ((msize >>  8) & 0xFF);
-          this->snd_b[2] = ((msize >> 16) & 0xFF);
+          this->snd_b[3] = ((msize      ) & 0xFF);
+          this->snd_b[2] = ((msize >>  8) & 0xFF);
+          this->snd_b[1] = ((msize >> 16) & 0xFF);
           this->snd_b[0] = ((msize >> 24) & 0xFF);
-          this->snd_b[7] = ~this->snd_b[6];
-          this->snd_b[5] = ~this->snd_b[4];
-          this->snd_b[3] = ~this->snd_b[2];
-          this->snd_b[1] = ~this->snd_b[0];
-          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 8), bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2));
+          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 4), bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2));
         }
         snd_m.unlock();
       }
@@ -115,8 +110,9 @@ namespace danet
         {
           // TODO: Błąd przy wysyłaniu nagłówka... (w miejscu bt)
         }
-        bnet::async_write(*(this->sck),bnet::buffer(*(snd_q.front()), snd_q.front()->size()), bind(&connection::on_send, this, placeholders::_1, placeholders::_2));
-        snd_m.lock();
+        snd_d = move(*(snd_q.front()));
+        bnet::async_write(*(this->sck),bnet::buffer(snd_d), bind(&connection::on_send, this, placeholders::_1, placeholders::_2));
+        snd_m.unlock();
       }
 
       void connection::on_send(const boost::system::error_code& ec, const size_t &bt)
@@ -127,20 +123,8 @@ namespace danet
           // TODO: Błąd przy wysyłaniu danych... (w miejscu bt)
         }
         snd_q.pop();
-        if(!snd_q.empty())
-        {
-          unsigned int msize = snd_q.front()->size();
-          this->snd_b[6] = ((msize      ) & 0xFF);
-          this->snd_b[4] = ((msize >>  8) & 0xFF);
-          this->snd_b[2] = ((msize >> 16) & 0xFF);
-          this->snd_b[0] = ((msize >> 24) & 0xFF);
-          this->snd_b[7] = ~this->snd_b[6];
-          this->snd_b[5] = ~this->snd_b[4];
-          this->snd_b[3] = ~this->snd_b[2];
-          this->snd_b[1] = ~this->snd_b[0];
-          bnet::async_write(*(this->sck),bnet::buffer(snd_b, 8), bind(&connection::on_hsend, this, placeholders::_1, placeholders::_2));
-        }
         snd_m.unlock();
+        this->send();
       }
 
       void connection::on_header(const boost::system::error_code& ec, const size_t& bt)
@@ -148,38 +132,29 @@ namespace danet
         rcv_m.lock();
         if(ec)
         {
+          if(ec)  // FIXME
+          {
+            // Zamknięto połączenie
+            this->netbase_rem_connection();
+            return;
+          }
           // TODO: Błąd przy odbieraniu nagłówka danych
         }
         unsigned int msgsiz = 0;
-        bool now = true;
-        byte last = 0;
         for(byte b: rcv_b)
         {
-          if(now)
-          {
-            msgsiz <<= 8;
-            msgsiz |= (unsigned int)b;
-            last = b;
-          }
-          else
-          {
-            if(~b != last)
-            {
-              // TODO: ERROR
-            }
-          }
-          now = ~now;
+          msgsiz <<= 8;
+          msgsiz |= (unsigned int)b;
         }
-        // <odbierz dane pakietu>
-        //rcv_d.clear();
         if(msgsiz == 0)
         {
+          rcv_m.unlock();
           this->recv();
         }
         else
         {
           rcv_d.resize(msgsiz);
-          bnet::async_read(*(this->sck),bnet::buffer(rcv_d),/*strd_r->wrap(*/bind(&connection::on_body, this, placeholders::_1, placeholders::_2)/*)*/);
+          bnet::async_read(*(this->sck),bnet::buffer(rcv_d),bind(&connection::on_body, this, placeholders::_1, placeholders::_2));
           rcv_m.unlock();
         }
       }
@@ -189,6 +164,12 @@ namespace danet
         rcv_m.lock();
         if(ec)
         {
+          if(ec)  // FIXME
+          {
+            // Zamknięto połączenie
+            this->netbase_rem_connection();
+            return;
+          }
           // TODO: Błąd przy odbieraniu danych
         }
         this->proto_data_recieved(rcv_d);

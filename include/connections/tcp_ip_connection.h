@@ -49,7 +49,7 @@ namespace danet
         boost::asio::ip::tcp::socket *sck;
 
         // Buffer for header
-        byte rcv_b[8];
+        byte rcv_b[4];
         std::vector<byte> rcv_d;
         std::mutex rcv_m;
 
@@ -57,6 +57,7 @@ namespace danet
         std::queue<std::shared_ptr<packet>> snd_q;
         std::mutex snd_m;
         byte snd_b[4];
+        std::vector<byte> snd_d;
 
         //unsigned char head[8];
         //std::vector<unsigned char> buff;

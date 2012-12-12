@@ -31,11 +31,11 @@ namespace danet
     netbase *nb;
 
     // Operują na netbase (bo protocol jest przyjacielem netbase)
-    void add_received_message(packet &p, netbase::user s)
+    void netbase_add_received_message(packet &p, netbase::user s)
     {
       nb->message_received(p, s);
     }
-    void add_message_sending(std::shared_ptr<packet> p, netbase::handle h)
+    void netbase_send_to_resource(std::shared_ptr<packet> p, netbase::handle h)
     {
       nb->send_to_resource(p, h);
     }

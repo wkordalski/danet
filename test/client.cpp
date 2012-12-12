@@ -8,10 +8,15 @@
 
 using namespace std;
 
+int prt;
+
 int main()
 {
+  cout << "Port: ";
+  cin >> prt;
+  cin.ignore();
   danet::network<msg> n(danet::protocols::basic<0>::create(-1));
-  danet::ip::tcp::address adr("127.0.0.1", 7777);
+  danet::ip::tcp::address adr("127.0.0.1", prt);
   if(!n.connect(&adr))
   {
     cerr << "Connect error" << endl;
@@ -21,10 +26,9 @@ int main()
   msg m;
   while(1)
   {
-    cin >> m.str;
+    getline(cin, m.str);
     if(!m.str.empty())
     {
-      cout << m.str << endl;
       n.send(m, {0});
     }
     int r = 0;

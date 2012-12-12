@@ -112,7 +112,7 @@ namespace danet
 
     std::shared_ptr<danet::address> address(handle h)
     {
-
+      return this->get_address(h);
     }
   };
 }
