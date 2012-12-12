@@ -60,10 +60,10 @@ namespace danet
       {
         if(ec)
         {
-          this->cancel_connection();
+          this->netbase_rem_connection();
           return;
         }
-        this->connection_add();
+        this->proto_add_connection();
         this->listen();
       }
 
@@ -168,7 +168,7 @@ namespace danet
               // TODO: ERROR
             }
           }
-          now ~= now;
+          now = ~now;
         }
         // <odbierz dane pakietu>
         //rcv_d.clear();
@@ -191,7 +191,7 @@ namespace danet
         {
           // TODO: Błąd przy odbieraniu danych
         }
-        this->forward_protocol(rcv_d);
+        this->proto_data_recieved(rcv_d);
         rcv_m.unlock();
         this->recv();
       }

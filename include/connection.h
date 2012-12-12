@@ -51,22 +51,22 @@ namespace danet
       return nb->service;
     }
 
-    void forward_protocol(packet &pkg)
+    void proto_data_recieved(packet &pkg)
     {
       return nb->proto->data_received(pkg);
     }
 
-    void connection_add()
+    void proto_add_connection()
     {
       return nb->proto->add_connection(id);
     }
 
-    void connection_rem()
+    void proto_rem_connection()
     {
       return nb->proto->rem_connection(id);
     }
 
-    void cancel_connection()
+    void netbase_rem_connection()
     {
       nb->rem_connection(id);
     }

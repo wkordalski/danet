@@ -51,6 +51,7 @@ namespace danet
     void message_received(packet &p, user s);
     handle add_connection(std::shared_ptr<connection> con);
     void rem_connection(handle h);
+    std::shared_ptr<danet::address> get_address(handle h);
 
     boost::asio::io_service & get_service()
     {

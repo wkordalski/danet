@@ -34,12 +34,12 @@ namespace danet
       return nb->service;
     }
 
-    netbase::handle apply_connection(std::shared_ptr<connection> con)
+    netbase::handle netbase_add_connection(std::shared_ptr<connection> con)
     {
       return this->nb->add_connection(con);
     }
 
-    void connection_add(netbase::handle h)
+    void proto_add_connection(netbase::handle h)
     {
       return nb->proto->add_connection(h);
     }

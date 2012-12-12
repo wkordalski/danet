@@ -27,7 +27,18 @@ add_library(danet SHARED
   src/connections/tcp_ip_connection.cpp
 )
 
+add_executable( server test/server.cpp )
+add_executable( client test/client.cpp )
+
 target_link_libraries(danet
   ${Boost_SYSTEM_LIBRARY}
   ${CMAKE_THREAD_LIBS_INIT}
+)
+
+target_link_libraries(server
+  danet
+)
+
+target_link_libraries(client
+  danet
 )

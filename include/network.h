@@ -109,6 +109,11 @@ namespace danet
     {
       return this->get_users_list();
     }
+
+    std::shared_ptr<danet::address> address(handle h)
+    {
+
+    }
   };
 }
 

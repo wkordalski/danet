@@ -10,10 +10,12 @@ namespace danet
 
 namespace danet
 {
+  class acceptor;
   class connection;
 
   class protocol
   {
+    friend class acceptor;
     friend class connection;
     friend class netbase;
   public:

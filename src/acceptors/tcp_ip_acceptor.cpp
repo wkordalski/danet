@@ -70,10 +70,10 @@ namespace danet
           // TODO: jakieś błąd akceptacji
           return;
         }
-        netbase::handle h = this->apply_connection(con);
+        netbase::handle h = this->netbase_add_connection(con);
         con->run(h);
         con->listen();
-        this->connection_add(h);
+        this->proto_add_connection(h);
         this->accept();
       }
 

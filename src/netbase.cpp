@@ -156,6 +156,23 @@ namespace danet
     connections_m.unlock();
   }
 
+  shared_ptr<danet::address> netbase::get_address(handle h)
+  {
+    // TODO: A co jeśli uchwyt jest niepoprawny?
+    if(h < 0x7FFFFFFF)
+    {
+      // Usuń połączenie...
+      int cid = h;
+      return connections[cid]->get_address();
+    }
+    else
+    {
+      // Usuń akceptor...
+      int aid = (0xFFFFFFFF - h);
+      return acceptors[aid]->get_address();
+    }
+  }
+
 //  /*
 //  // NETWORK CLASS /////////////////////////////////////////////////////////////
 //
