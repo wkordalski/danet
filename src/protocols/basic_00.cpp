@@ -1,5 +1,7 @@
 #include "protocols/basic_00.h"
 
+using namespace std;
+
 namespace danet
 {
   namespace protocols

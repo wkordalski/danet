@@ -135,6 +135,7 @@ namespace danet
           if(ec)  // FIXME
           {
             // Zamknięto połączenie
+            this->proto_rem_connection();
             this->netbase_rem_connection();
             return;
           }
@@ -167,6 +168,7 @@ namespace danet
           if(ec)  // FIXME
           {
             // Zamknięto połączenie
+            this->proto_rem_connection();
             this->netbase_rem_connection();
             return;
           }

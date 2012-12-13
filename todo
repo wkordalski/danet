@@ -1,7 +1,6 @@
 Teraz:
 > obsługa błędnych uchwytów do połączeń i akceptorów
 > obsługa zerwania połączenia
-> protokół testowy (przesyłanie danych przez jedno połączenie)
 
 Wersja 0.1:
 > wydajność (funkcje inline oraz przekazywanie argumentów)
