@@ -5,8 +5,8 @@
  * Created on 21 listopad 2012, 21:49
  */
 
-#ifndef __DANET_PROTOCOLS_BASIC_0_H
-#define __DANET_PROTOCOLS_BASIC_0_H
+#ifndef __DANET_PROTOCOLS_BASIC_BASIC_0_H
+#define __DANET_PROTOCOLS_BASIC_BASIC_0_H
 
 #include "basic.h"
 
@@ -39,6 +39,7 @@ namespace danet
       virtual void send_data(packet p, const std::vector<netbase::user> &u);
       virtual void add_connection(netbase::handle h);
       virtual void rem_connection(netbase::handle h);
+      virtual netbase::user get_id();
 
       int rts;
     };

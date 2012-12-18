@@ -1,4 +1,4 @@
-#include "protocols/basic_00.h"
+#include "protocols/basic/basic_00.h"
 
 using namespace std;
 
@@ -67,6 +67,12 @@ namespace danet
     void basic<0>::rem_connection(netbase::handle h)
     {
       // TODO
+    }
+
+    netbase::user basic<0>::get_id()
+    {
+      // TODO
+      return 0;
     }
   }
 }

@@ -1,4 +1,5 @@
 Teraz:
+> protokół atrapa (dummy)
 > obsługa błędnych uchwytów do połączeń i akceptorów
 > obsługa zerwania połączenia
 > protokół podstawowy (dodawanie/usuwanie połączeń, przesyłanie danych przez sieć)
