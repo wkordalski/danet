@@ -40,7 +40,7 @@ namespace danet
       bool isserver = false;                        // Is this instance a server
       netbase::user mid = 0;                        // My user id
       netbase::user sid = 0;                        // Server id
-      std::map<netbase::user, netbase::handle> add; // Client-client connections
+      std::map<netbase::user, netbase::handle> add; // Server all connections
       netbase::handle srv = 0;                      // Server handle
     };
   }
