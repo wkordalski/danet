@@ -40,6 +40,7 @@ namespace danet
       virtual void add_connection(netbase::handle h);
       virtual void rem_connection(netbase::handle h);
       virtual netbase::user get_id();
+      virtual std::set<netbase::user> get_users();
 
       int rts;
     };

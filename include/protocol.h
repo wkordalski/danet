@@ -8,6 +8,8 @@ namespace danet
 
 #include "netbase.h"
 
+#include <set>
+
 namespace danet
 {
   class acceptor;
@@ -27,6 +29,7 @@ namespace danet
     virtual void add_connection(netbase::handle h) = 0;
     virtual void rem_connection(netbase::handle h) = 0;
     virtual netbase::user get_id() = 0;
+    virtual std::set<netbase::user> get_users() = 0;
 
     // Netbase object pointer
     netbase *nb;

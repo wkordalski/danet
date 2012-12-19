@@ -3,6 +3,7 @@
 #include "../include/network.h"
 #include "../include/protocols/basic/basic_00.h"
 #include "../include/address/tcp_ip_address.h"
+#include "protocols/dummy/dummy.h"
 
 #include <iostream>
 
@@ -15,7 +16,7 @@ int main()
   cout << "Port: ";
   cin >> prt;
   cin.ignore();
-  danet::network<msg> n(danet::protocols::basic<0>::create(-1));
+  danet::network<msg> n(danet::protocols::dummy::create(false));
   danet::ip::tcp::address adr("127.0.0.1", prt);
   if(!n.connect(&adr))
   {
@@ -29,7 +30,10 @@ int main()
     getline(cin, m.str);
     if(!m.str.empty())
     {
-      n.send(m, {0});
+      int rcv;
+      cin >> rcv;
+      cin.ignore();
+      n.send(m, {rcv});
     }
     int r = 0;
     if((r = n.receive(m)))

@@ -36,12 +36,13 @@ namespace danet
       virtual void add_connection(netbase::handle h);
       virtual void rem_connection(netbase::handle h);
       virtual netbase::user get_id();
+      virtual std::set<netbase::user> get_users();
 
       bool isserver = false;                        // Is this instance a server
       netbase::user mid = 0;                        // My user id
-      netbase::user sid = 0;                        // Server id
       std::map<netbase::user, netbase::handle> add; // Server all connections
       netbase::handle srv = 0;                      // Server handle
+      std::set<netbase::user> usr;                  // All users in network
     };
   }
 }

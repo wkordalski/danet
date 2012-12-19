@@ -74,5 +74,10 @@ namespace danet
       // TODO
       return 0;
     }
+
+    set<netbase::user> basic<0>::get_users()
+    {
+      return set<netbase::user>();
+    }
   }
 }
