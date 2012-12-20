@@ -4,6 +4,7 @@
 #include "netbase.h"
 #include "address.h"
 
+#include <set>
 #include <string>
 #include <vector>
 
@@ -105,7 +106,7 @@ namespace danet
       return uid;
     }
 
-    std::vector<user> users()
+    std::set<user> users()
     {
       return this->get_users_list();
     }

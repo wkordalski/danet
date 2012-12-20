@@ -1,7 +1,7 @@
 project ( danet )
 cmake_minimum_required( VERSION 2.6 )
 
-find_package( Boost COMPONENTS system REQUIRED )
+find_package( Boost COMPONENTS system program_options REQUIRED )
 
 find_package (Threads)
 
@@ -15,6 +15,7 @@ include_directories(
   include/
 
   ${Boost_SYSTEM_INCLUDE_DIR}
+  ${Boost_PROGRAM_OPTIONS_INCLUDE_DIR}
 )
 
 add_library(danet SHARED
@@ -30,6 +31,7 @@ add_library(danet SHARED
 
 add_executable( server test/server.cpp )
 add_executable( client test/client.cpp )
+add_executable( dummy-server test/dummy-server.cpp )
 
 target_link_libraries(danet
   ${Boost_SYSTEM_LIBRARY}
@@ -42,4 +44,9 @@ target_link_libraries(server
 
 target_link_libraries(client
   danet
+)
+
+target_link_libraries(dummy-server
+  danet
+  ${Boost_PROGRAM_OPTIONS_LIBRARY}
 )

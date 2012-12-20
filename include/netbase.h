@@ -20,6 +20,7 @@ namespace danet
 #include <memory>
 #include <mutex>
 #include <queue>
+#include <set>
 #include <string>
 #include <thread>
 #include <vector>
@@ -47,7 +48,7 @@ namespace danet
     void send_message(std::vector<byte> v, const std::vector<user> &s);
     void recv_message(std::vector<byte> &v, user& s);
     void send_to_resource(std::shared_ptr<packet> v, handle h);
-    std::vector<user> get_users_list();
+    std::set<user> get_users_list();
     void message_received(packet &p, user s);
     handle add_connection(std::shared_ptr<connection> con);
     void rem_connection(handle h);

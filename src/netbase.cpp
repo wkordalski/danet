@@ -172,4 +172,9 @@ namespace danet
       return acceptors[aid]->get_address();
     }
   }
+
+  set<netbase::user> netbase::get_users_list()
+  {
+    return this->proto->get_users();
+  }
 }
