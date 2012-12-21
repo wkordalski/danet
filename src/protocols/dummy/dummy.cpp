@@ -58,7 +58,7 @@ namespace danet
       if(isserver)
       {
         netbase::user uid = h;
-        add[uid] = h;
+        usr.insert(uid);
         {
           // Wyślij ID
           shared_ptr<packet> p(new packet());
@@ -82,6 +82,19 @@ namespace danet
             this->netbase_send_to_resource(p, P.second);
           }
         }
+        {
+          // WYŚLIJ ID SĄSIADÓW
+          shared_ptr<packet> p(new packet());
+          p->push_back(4);  // OTHER ID
+          p->push_back(0);  //
+          p->push_back(0);  // CHECKSUM
+          p->push_back(0);  //
+          insert_int(this->usr.size(), *p);
+          for(netbase::user U : this->usr)
+            insert_int(U, *p);
+          this->netbase_send_to_resource(p, h);
+        }
+        add[uid] = h;
       }
       else
       {
@@ -100,15 +113,10 @@ namespace danet
         // Do kogo przesłać?
         if(pkg[0] == 0)
         {
-          // Sprawdź checksum
-          int chk = (get_int(0, pkg) >> 8);
-          if(chk != 0)
-          {
-            // Checksum niepoprawny
-          }
+          int chk = get_int(0, pkg);
           vector<netbase::user> tos;
           int snd = get_int(4, pkg);
-          int rcvc= get_int(8, pkg);    // Zawsze 1!
+          int rcvc= get_int(8, pkg);
           tos.reserve(rcvc);
           for(int i = 0; i < rcvc; i++)
             tos.push_back(get_int(12+i*4, pkg));
@@ -124,8 +132,8 @@ namespace danet
           for(netbase::user U : tos)
           {
             auto it = add.find(U);
-            if(it == add.end()) continue;
-            this->netbase_send_to_resource(p, it->second);
+            if(it != add.end())
+              this->netbase_send_to_resource(p, it->second);
           }
         }
       }
@@ -167,6 +175,16 @@ namespace danet
           int nid = get_int(4, pkg);
           this->usr.erase(nid);
         }
+        else if(pkg[0] == 4)
+        {
+          // INFO O INNYCH KLIENTACH
+          int chk = get_int(0, pkg);
+          int nid = get_int(4, pkg);
+          for(int i = 0; i < nid; i++)
+          {
+            this->usr.insert(get_int(8+i*4, pkg));
+          }
+        }
         else
         {
           // TODO - inna wiadomość (systemowa)
@@ -191,6 +209,7 @@ namespace danet
         }
         if(uid == 0) return;
         add.erase(uid);
+        usr.erase(uid);
         // TODO: Wyślij info do reszty
         shared_ptr<packet> p(new packet());
         p->push_back(3);  // REMOVE CLIENT
@@ -240,7 +259,7 @@ namespace danet
     netbase::user dummy::get_id()
     {
       // TODO
-      return 0;
+      return this->mid;
     }
 
     set<netbase::user> dummy::get_users()

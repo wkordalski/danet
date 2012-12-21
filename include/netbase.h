@@ -53,6 +53,7 @@ namespace danet
     handle add_connection(std::shared_ptr<connection> con);
     void rem_connection(handle h);
     std::shared_ptr<danet::address> get_address(handle h);
+    netbase::user get_id();
 
     boost::asio::io_service & get_service()
     {

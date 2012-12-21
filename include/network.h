@@ -30,12 +30,12 @@ namespace danet
     /**
      * Represents the network manager handle type
      */
-    //typedef netbase::handle handle;
+    typedef netbase::handle handle;
 
     /**
      * Represents the network user id type
      */
-    //typedef netbase::user user;
+    typedef netbase::user user;
 
     /**
      * Tworzy obiekt menadżera sieci
@@ -114,6 +114,11 @@ namespace danet
     std::shared_ptr<danet::address> address(handle h)
     {
       return this->get_address(h);
+    }
+
+    user id()
+    {
+      return this->get_id();
     }
   };
 }

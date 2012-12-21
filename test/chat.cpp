@@ -1,0 +1,251 @@
+#include <iostream>
+#include <map>
+#include <string>
+
+#include <boost/program_options.hpp>
+
+#include <network.h>
+#include <protocols/dummy/dummy.h>
+#include <address/tcp_ip_address.h>
+
+using namespace std;
+
+struct msg
+{
+  int id;
+  string str;
+  static vector<unsigned char> get_data(const msg &m)
+  {
+    vector<unsigned char> v;
+    v.reserve(m.str.size()+4);
+    int tid = m.id;
+    for(int i = 0; i < 4; i++)
+    {
+      v.push_back(tid & 0xFF);
+      tid >>= 8;
+    }
+    for(char c: m.str)
+    {
+      v.push_back((unsigned char)c);
+    }
+    return v;
+  }
+  static msg set_data(const vector<unsigned char> &v)
+  {
+    if(v.size() < 4)
+    {
+      // BŁĘDNY PAKIET
+      assert(0);
+      return msg();
+    }
+    msg m;
+    for(int i = 3; i >= 0; i--)
+    {
+      m.id <<= 8;
+      m.id |= v[i];
+    }
+    m.str = "";
+    if(v.size() > 4)
+    {
+      m.str.reserve(v.size()-4);
+      for(int i = 4; i < v.size(); i++)
+      {
+        m.str.push_back((char)v[i]);
+      }
+    }
+    return m;
+  }
+};
+
+map<int, string> us;
+
+
+string t;
+
+string uname;
+// <editor-fold defaultstate="collapsed" desc="Command line parsing friendly functions">
+
+namespace po = boost::program_options;
+typedef boost::program_options::variables_map varmap;
+typedef boost::program_options::options_description_easy_init opts_init;
+typedef boost::program_options::options_description opts;
+
+pair<string,int> parse(string s)
+{
+  bool adr = true;
+  string fr = "";
+  string sc = "";
+  for(char C : s)
+  {
+    if(C == ':')
+    {
+      adr = false;
+      continue;
+    }
+    if(adr) fr += C;
+    else sc += C;
+  }
+  int ccs = std::stoi(sc);
+  return pair<string,int>(fr,ccs);
+}
+
+// </editor-fold>
+
+
+int main(int argc, char *argv[])
+{
+  // <editor-fold defaultstate="collapsed" desc="Command line parsing">
+  opts aval("Allowed options");
+  aval.add_options()
+      ("help,h", "Prints this help message.")
+      ("nick,n", po::value<string>(), "Your nick name")
+      ("listen,l", po::value<vector<string>>(), "Listen on these address and ports")
+      ("connect,c", po::value<vector<string>>(), "Connect to these address and ports");
+  varmap vm;
+  po::store(po::parse_command_line(argc, argv, aval), vm);
+  po::notify(vm);
+
+  if (vm.count("help") > 0 || vm.count("nick") == 0)
+  {
+    cout << "Chat - dummy protocol (from libdanet)" << endl;
+    cout << endl;
+    cout << aval << endl;
+    cout << "Please report bugs to email@server.com (address invalid now)" << endl;
+    return 1;
+  }
+  else
+  {
+    uname = vm["nick"].as<string>();
+  }
+  // </editor-fold>
+
+  clog << "Starting chat (from libdanet)" << endl;
+  danet::network<msg> n(danet::protocols::dummy::create(false));
+  // <editor-fold defaultstate="collapsed" desc="Adding connections">
+  vector<string> ls;
+  if(vm.count("listen"))
+  {
+    ls = vm["listen"].as<vector<string>>();
+  }
+  vector<string> cn;
+  if(vm.count("connect"))
+  {
+    cn = vm["connect"].as<vector<string>>();
+  }
+  for(string S : ls)
+  {
+    auto P = parse(S);
+    danet::ip::tcp::address adr(P.first, P.second);
+    if(n.listen(&adr) == 0)
+    {
+      clog << "Error listening on " << P.first << " at port " << P.second << endl;
+    }
+  }
+  for(string S : cn)
+  {
+    auto P = parse(S);
+    danet::ip::tcp::address adr(P.first, P.second);
+    if(n.connect(&adr) == 0)
+    {
+      clog << "Error connecting to " << P.first << " at port " << P.second << endl;
+    }
+  }
+  // </editor-fold>
+  cout << "Press enter to start" << endl;
+  getline(cin, t);
+  msg mmm;
+  mmm.id = n.id();
+  mmm.str = uname;
+  vector<danet::network<msg>::user> usr2;
+  auto nusers = n.users();
+  for(danet::network<msg>::user U : nusers)
+    if(U != mmm.id)
+      usr2.push_back(U);
+  n.send(mmm, usr2);
+  clog << "Ready (send quit() to quit)" << endl;
+  while(1)
+  {
+    msg m;
+    getline(cin, m.str);
+    if(m.str == "quit()")
+    {
+      break;
+    }
+    if(!m.str.empty())
+    {
+      while(1)
+      {
+        string rcv;
+        cout << "To: ";
+        cin >> rcv;
+        if(rcv == "@") break;
+        cin.ignore();
+        int rcvi = 0;
+        for(pair<int,string> P : us)
+          if(P.second == rcv)
+          {
+            rcvi = P.first;
+            break;
+          }
+        if(rcvi)
+        {
+          m.id = 0;
+          n.send(m, {rcvi});
+          break;
+        }
+        else
+        {
+          cout << "User not found..." << endl;
+        }
+      }
+    }
+    int r = 0;
+    while((r = n.receive(m)) > 0)
+    {
+      if(m.id == 0)
+      {
+        cout << us[r] << ": " << m.str << endl;
+      }
+      else
+      {
+        if(m.str == "")
+        {
+          if(us.find(m.id) != us.end())
+            us.erase(m.id);
+          clog << "User with id " << m.id << " leaved" << endl;
+        }
+        else
+        {
+          if(m.str[0] == '!')
+          {
+            us[m.id] = m.str.erase(0,1);
+          }
+          else
+          {
+            us[m.id] = m.str;
+            msg mm;
+            mm.id = n.id();
+            mm.str = "!" + uname;
+            n.send(mm, {m.id});
+          }
+          clog << "User with id " << m.id << " connected as " << m.str << endl;
+        }
+      }
+    }
+  }
+  msg m;
+  m.id = n.id();
+  m.str = "";
+  vector<danet::network<msg>::user> usr;
+  for(pair<int,string> P : us)
+  {
+    if(P.first != m.id)
+    {
+      usr.push_back(P.first);
+    }
+  }
+  n.send(m, usr);
+  cout << "Press enter to exit..." << endl;
+  getline(cin, m.str);
+  return 0;
+}

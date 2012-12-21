@@ -177,4 +177,9 @@ namespace danet
   {
     return this->proto->get_users();
   }
+
+  netbase::user netbase::get_id()
+  {
+    return this->proto->get_id();
+  }
 }

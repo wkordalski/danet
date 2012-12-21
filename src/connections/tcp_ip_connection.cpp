@@ -110,7 +110,7 @@ namespace danet
         {
           // TODO: Błąd przy wysyłaniu nagłówka... (w miejscu bt)
         }
-        snd_d = move(*(snd_q.front()));
+        snd_d = *(snd_q.front());
         bnet::async_write(*(this->sck),bnet::buffer(snd_d), bind(&connection::on_send, this, placeholders::_1, placeholders::_2));
         snd_m.unlock();
       }
