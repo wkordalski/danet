@@ -49,7 +49,7 @@ namespace danet
     void recv_message(std::vector<byte> &v, user& s);
     void send_to_resource(std::shared_ptr<packet> v, handle h);
     std::set<user> get_users_list();
-    void message_received(packet &p, user s);
+    void message_received(packet p, user s);
     handle add_connection(std::shared_ptr<connection> con);
     void rem_connection(handle h);
     std::shared_ptr<danet::address> get_address(handle h);

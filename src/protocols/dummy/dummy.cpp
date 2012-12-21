@@ -105,7 +105,7 @@ namespace danet
       }
     }
 
-    void dummy::data_received(packet& pkg)
+    void dummy::data_received(packet pkg)
     {
       if(this->isserver)
       {
@@ -152,7 +152,7 @@ namespace danet
           p.reserve(pkg.size()-8);
           for(int i = 8; i < pkg.size(); i++)
             p.push_back(pkg[i]);
-          this->netbase_add_received_message(p, snd);
+          this->netbase_add_received_message(move(p), snd);
         }
         else if(pkg[0] == 1)
         {

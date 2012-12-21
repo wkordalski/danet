@@ -124,7 +124,7 @@ namespace danet
     msgs_m.unlock();
   }
 
-  void netbase::message_received(packet& p, user s)
+  void netbase::message_received(packet p, user s)
   {
     msgs_m.lock();
     msgs.push(pair<int,packet>(s, move(p)));

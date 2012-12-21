@@ -17,7 +17,7 @@ namespace danet
       // TODO: implement
     }
 
-    void basic<0>::data_received(packet& pkg)
+    void basic<0>::data_received(packet pkg)
     {
       // TODO
       /*if(pkg.size() < 8)

@@ -1,5 +1,7 @@
+#include <chrono>
 #include <iostream>
 #include <string>
+#include <thread>
 
 #include <boost/program_options.hpp>
 
@@ -96,6 +98,9 @@ int main(int argc, char *argv[])
     }
   }
   clog << "Ready (press Ctrl+C to quit)" << endl;
-  while(1);
+  while(1)
+  {
+    this_thread::sleep_for(chrono::milliseconds(1000));
+  }
   return 0;
 }

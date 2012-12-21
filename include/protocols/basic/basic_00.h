@@ -35,7 +35,7 @@ namespace danet
     protected:
       basic(int rts);
 
-      virtual void data_received(packet &pkg);
+      virtual void data_received(packet pkg);
       virtual void send_data(packet p, const std::vector<netbase::user> &u);
       virtual void add_connection(netbase::handle h);
       virtual void rem_connection(netbase::handle h);

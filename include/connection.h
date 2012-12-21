@@ -51,9 +51,9 @@ namespace danet
       return nb->service;
     }
 
-    void proto_data_recieved(packet &pkg)
+    void proto_data_recieved(packet pkg)
     {
-      return nb->proto->data_received(pkg);
+      return nb->proto->data_received(move(pkg));
     }
 
     void proto_add_connection()
