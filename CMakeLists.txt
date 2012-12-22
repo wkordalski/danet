@@ -18,11 +18,35 @@
 # For a list of authors see AUTHORS file.
 #
 
-project ( danet )
+project ( Danet )
 cmake_minimum_required( VERSION 2.6 )
 
-find_package( Boost COMPONENTS system program_options REQUIRED )
+set(DANET_MAJOR_VERSION 0)
+set(DANET_MINOR_VERSION 0)
+set(DANET_PATCH_VERSION 1)
+set(DANET_VERSION
+  ${DANET_MAJOR_VERSION}.${DANET_MINOR_VERSION}.${DANET_PATCH_VERSION}
+)
 
+# Offer the user the choice of overriding the installation directories
+set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for library")
+set(INSTALL_INC_DIR include CACHE PATH "Installation directory for header files")
+if(WIN32 AND NOT CYGWIN)
+  set(DEF_INSTALL_CMAKE_DIR CMake)
+else()
+  set(DEF_INSTALL_CMAKE_DIR lib/CMake/danet)
+endif()
+set(INSTALL_CMAKE_DIR ${DEF_INSTALL_CMAKE_DIR} CACHE PATH "Installation directory for CMake files")
+
+# Make relative paths absolute (needed later on)
+foreach(p LIB BIN INC CMAKE)
+  set(var INSTALL_${p}_DIR)
+  if(NOT IS_ABSOLUTE "${${var}}")
+    set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+  endif()
+endforeach()
+
+find_package( Boost COMPONENTS system program_options REQUIRED )
 find_package (Threads)
 
 # DEBUG & RELEASE
@@ -36,7 +60,11 @@ include_directories(
 
   ${Boost_SYSTEM_INCLUDE_DIR}
   ${Boost_PROGRAM_OPTIONS_INCLUDE_DIR}
+
+  ${PROJECT_BINARY_DIR}
 )
+
+configure_file(config.h.in "${CMAKE_CURRENT_BINARY_DIR}/config.h" @ONLY)
 
 add_library(danet SHARED
   src/netbase.cpp
@@ -49,19 +77,63 @@ add_library(danet SHARED
   src/connections/tcp_ip_connection.cpp
 )
 
-add_executable( dummy-server test/dummy-server.cpp )
-add_executable( chat test/chat.cpp )
-
 target_link_libraries(danet
   ${Boost_SYSTEM_LIBRARY}
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
+set(DANET_PUBLIC_HEADER
+"include/network.h;include/netbase.h;include/protocol.h;include/acceptor.h;include/connection.h;include/address.h;include/address/tcp_ip_address.h;include/protocols/basic/basic.h;include/protocols/basic/basic_00.h;include/protocols/dummy/dummy.h"
+)
+
+set_target_properties(danet PROPERTIES
+  PUBLIC_HEADER "${DANET_PUBLIC_HEADER};${CMAKE_CURRENT_BINARY_DIR}/config.h")
+
+install(TARGETS danet
+  EXPORT DanetLibraryDepends
+  LIBRARY DESTINATION "${INSTALL_LIB_DIR}" COMPONENT lib
+  PUBLIC_HEADER DESTINATION "${INSTALL_INC_DIR}/danet" COMPONENT dev)
+
+
+#######################################################################
+
+export(TARGETS danet
+  FILE "${PROJECT_BINARY_DIR}/DanetLibraryDepends.cmake")
+
+export(PACKAGE Danet)
+
+# Create a FooBarBuildTreeSettings.cmake file for the use from the build tree
+configure_file(DanetBuildTreeSettings.cmake.in
+  "${PROJECT_BINARY_DIR}/DanetBuildTreeSettings.cmake" @ONLY)
+
+# Create the DanetConfig.cmake and DanetConfigVersion files
+file(RELATIVE_PATH CONF_REL_INCLUDE_DIR "${INSTALL_CMAKE_DIR}"
+   "${INSTALL_INC_DIR}")
+configure_file(DanetConfig.cmake.in
+  "${PROJECT_BINARY_DIR}/DanetConfig.cmake" @ONLY)
+configure_file(DanetConfigVersion.cmake.in
+  "${PROJECT_BINARY_DIR}/DanetConfigVersion.cmake" @ONLY)
+
+# Install the DanetConfig.cmake and DanetConfigVersion.cmake
+install(FILES
+  "${PROJECT_BINARY_DIR}/DanetConfig.cmake"
+  "${PROJECT_BINARY_DIR}/DanetConfigVersion.cmake"
+  DESTINATION "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+
+# Install the export set for use with the install-tree
+install(EXPORT DanetLibraryDepends DESTINATION
+  "${INSTALL_CMAKE_DIR}" COMPONENT dev)
+
+
+########## SAMPLES ############################
+
+add_executable( dummy-server test/dummy-server.cpp )
+add_executable( chat test/chat.cpp )
+
 target_link_libraries(dummy-server
   danet
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
 )
-
 target_link_libraries(chat
   danet
   ${Boost_PROGRAM_OPTIONS_LIBRARY}
