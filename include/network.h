@@ -39,9 +39,6 @@ namespace danet
    *
    * @param T Typ reprezentujący wiadomości wysyłane przez menadżer sieci.
    * Musi zawierać statyczne funkcje get_data i set_data.
-   *
-   * @param P Typ reprezentujący hasło przy łączeniu z siecią.
-   * Musi zawierać funkcję data.
    */
   template<class T>
   class network : protected netbase
