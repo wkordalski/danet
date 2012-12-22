@@ -1,5 +1,5 @@
 #include "netbase.h"
-#include "connections/tcp_ip_connection.h"
+#include "tcp_ip_connection.h"
 
 #include <string>
 

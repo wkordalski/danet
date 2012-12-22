@@ -2,7 +2,7 @@
 #define	__DANET_TCP_IP_CONNECTION_H
 
 #include "connection.h"
-#include "acceptors/tcp_ip_acceptor.h"
+#include "../acceptors/tcp_ip_acceptor.h"
 
 namespace danet
 {

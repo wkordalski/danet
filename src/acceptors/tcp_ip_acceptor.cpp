@@ -1,5 +1,6 @@
-#include "acceptors/tcp_ip_acceptor.h"
-#include "connections/tcp_ip_connection.h"
+#include "tcp_ip_acceptor.h"
+
+#include "../connections/tcp_ip_connection.h"
 #include "address/tcp_ip_address.h"
 
 #include <string>
