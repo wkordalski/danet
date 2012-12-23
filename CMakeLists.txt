@@ -21,6 +21,8 @@
 project ( Danet )
 cmake_minimum_required( VERSION 2.6 )
 
+option(MAKE_DOC "Build documentation of Danet library" ON)
+
 ### VERSION
 set(DANET_MAJOR_VERSION 0)
 set(DANET_MINOR_VERSION 0)
@@ -113,15 +115,15 @@ install(TARGETS danet
 
 ### DOCUMENTATION
 find_package(Doxygen)
-if(DOXYGEN_FOUND)
+if(DOXYGEN_FOUND AND MAKE_DOC)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
+  add_custom_target(doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
   install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html/ DESTINATION "${INSTALL_DOC_DIR}/libdanet" COMPONENT doc)
-endif(DOXYGEN_FOUND)
+endif(DOXYGEN_FOUND AND MAKE_DOC)
 
 ################################################################################
 
@@ -166,6 +168,3 @@ target_link_libraries(chat
 )
 
 ################################################################################
-
-### PACKAGING - INSTALATION FILES GENERATION (TODO)
-#...

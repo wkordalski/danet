@@ -37,3 +37,6 @@ include("${DANET_CMAKE_DIR}/DanetLibraryDepends.cmake")
 
 # These are IMPORTED targets created by DanetLibraryDepends.cmake
 set(DANET_LIBRARIES danet)
+
+set(DANET_FOUND)
+set(DANET_DEFINITIONS "-std=c++11")
