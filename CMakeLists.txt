@@ -87,8 +87,13 @@ target_link_libraries(danet
 
 ### HEADERS
 set(DANET_PUBLIC_HEADER
-"include/network.h;include/netbase.h;include/protocol.h;include/acceptor.h;include/connection.h;include/address.h;include/address/tcp_ip_address.h;include/protocols/basic/basic.h;include/protocols/basic/basic_00.h;include/protocols/dummy/dummy.h"
-)
+"include/network.h;include/netbase.h;include/protocol.h;include/acceptor.h;include/connection.h;include/address.h" )
+
+set(DANET_PUBLIC_HEADER
+"${DANET_PUBLIC_HEADER};include/address_ip_tcp.h" )
+
+set(DANET_PUBLIC_HEADER
+"${DANET_PUBLIC_HEADER};include/protocol_basic.h;include/protocol_basic_00.h;include/protocol_dummy.h")
 
 set_target_properties(danet PROPERTIES
   PUBLIC_HEADER "${DANET_PUBLIC_HEADER};${CMAKE_CURRENT_BINARY_DIR}/config.h"

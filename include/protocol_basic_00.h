@@ -21,7 +21,7 @@
 #ifndef __DANET_PROTOCOLS_BASIC_BASIC_0_H
 #define __DANET_PROTOCOLS_BASIC_BASIC_0_H
 
-#include "basic.h"
+#include "protocol_basic.h"
 
 #include <memory>
 

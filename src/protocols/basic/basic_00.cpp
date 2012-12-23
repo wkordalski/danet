@@ -18,7 +18,7 @@
  * For a list of authors see AUTHORS file.
  */
 
-#include "protocols/basic/basic_00.h"
+#include "protocol_basic_00.h"
 
 using namespace std;
 

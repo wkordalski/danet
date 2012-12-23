@@ -18,7 +18,7 @@
  * For a list of authors see AUTHORS file.
  */
 
-#include "address/tcp_ip_address.h"
+#include "address_ip_tcp.h"
 #include "../acceptors/tcp_ip_acceptor.h"
 #include "../connections/tcp_ip_connection.h"
 

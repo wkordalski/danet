@@ -22,7 +22,7 @@
 #define	__DANET_TCP_IP_ACCEPTOR_H
 
 #include "netbase.h"
-#include "address/tcp_ip_address.h"
+#include "address_ip_tcp.h"
 #include "acceptor.h"
 
 #include <memory>

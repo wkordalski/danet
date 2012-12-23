@@ -18,7 +18,7 @@
  * For a list of authors see AUTHORS file.
  */
 
-#include "protocols/dummy/dummy.h"
+#include "protocol_dummy.h"
 
 #include <utility>
 #include <vector>

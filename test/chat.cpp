@@ -25,8 +25,8 @@
 #include <boost/program_options.hpp>
 
 #include <network.h>
-#include <protocols/dummy/dummy.h>
-#include <address/tcp_ip_address.h>
+#include <protocol_dummy.h>
+#include <address_ip_tcp.h>
 
 using namespace std;
 
