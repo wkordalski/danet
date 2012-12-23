@@ -32,6 +32,7 @@ set(DANET_VERSION
 ### INSTALATION DIRECTORIES
 set(INSTALL_LIB_DIR lib CACHE PATH "Installation directory for library")
 set(INSTALL_INC_DIR include CACHE PATH "Installation directory for header files")
+set(INSTALL_DOC_DIR share/doc CACHE PATH "Installation directory for documentation files")
 if(WIN32 AND NOT CYGWIN)
   set(DEF_INSTALL_CMAKE_DIR CMake)
 else()
@@ -114,11 +115,12 @@ install(TARGETS danet
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
-  add_custom_target(doc
+  add_custom_target(doc ALL
     ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen" VERBATIM
     )
+  install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/html/ DESTINATION "${INSTALL_DOC_DIR}/libdanet" COMPONENT doc)
 endif(DOXYGEN_FOUND)
 
 ################################################################################
