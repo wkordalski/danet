@@ -155,8 +155,8 @@ install(EXPORT DanetLibraryDepends DESTINATION
 
 ################################################################################
 
-add_executable( dummy-server test/dummy-server.cpp )
-add_executable( chat test/chat.cpp )
+add_executable( dummy-server EXCLUDE_FROM_ALL test/dummy-server.cpp )
+add_executable( chat EXCLUDE_FROM_ALL test/chat.cpp )
 
 target_link_libraries(dummy-server
   danet
