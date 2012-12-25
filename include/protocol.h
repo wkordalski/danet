@@ -44,10 +44,10 @@ namespace danet
     virtual ~protocol() {};
   protected:
     // Komendy od netbase
-    virtual void data_received(packet pkg) = 0;
-    virtual void send_data(packet p, const std::vector<netbase::user> &u) = 0;
-    virtual void add_connection(netbase::handle h) = 0;
-    virtual void rem_connection(netbase::handle h) = 0;
+    virtual void on_receive(packet pkg) = 0;
+    virtual void do_send(packet p, const std::vector<netbase::user> &u) = 0;
+    virtual void connection_add(netbase::handle h) = 0;
+    virtual void connection_rem(netbase::handle h) = 0;
     virtual netbase::user get_id() = 0;
     virtual std::set<netbase::user> get_users() = 0;
 
@@ -57,11 +57,11 @@ namespace danet
     // Operują na netbase (bo protocol jest przyjacielem netbase)
     void netbase_add_received_message(packet p, netbase::user s)
     {
-      nb->message_received(move(p), s);
+      nb->_on_receive(move(p), s);
     }
-    void netbase_send_to_resource(std::shared_ptr<packet> p, netbase::handle h)
+    void netbase_do_send(std::shared_ptr<packet> p, netbase::handle h)
     {
-      nb->send_to_resource(p, h);
+      nb->_do_send(p, h);
     }
   };
 }

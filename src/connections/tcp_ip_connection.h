@@ -44,7 +44,7 @@ namespace danet
         virtual bool run(netbase *nb, netbase::handle id);
         virtual bool run(netbase::handle id);
 
-        virtual void send_data(std::shared_ptr<packet> data);
+        virtual void do_send(std::shared_ptr<packet> data);
 
         virtual std::shared_ptr<danet::address> get_address();
 

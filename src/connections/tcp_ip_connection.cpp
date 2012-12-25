@@ -99,7 +99,7 @@ namespace danet
         rcv_m.unlock();
       }
 
-      void connection::send_data(shared_ptr<packet> data)
+      void connection::do_send(shared_ptr<packet> data)
       {
         snd_m.lock();
         bool emptst = snd_q.empty();
@@ -194,7 +194,7 @@ namespace danet
           }
           // TODO: Błąd przy odbieraniu danych
         }
-        this->proto_data_recieved(move(rcv_d));
+        this->proto_on_recieve(move(rcv_d));
         rcv_m.unlock();
         this->recv();
       }

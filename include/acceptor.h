@@ -51,17 +51,17 @@ namespace danet
 
     boost::asio::io_service & get_ioservice()
     {
-      return nb->service;
+      return nb->_service;
     }
 
     netbase::handle netbase_add_connection(std::shared_ptr<connection> con)
     {
-      return this->nb->add_connection(con);
+      return this->nb->_connection_add(con);
     }
 
     void proto_add_connection(netbase::handle h)
     {
-      return nb->proto->add_connection(h);
+      return nb->_proto->connection_add(h);
     }
 
 

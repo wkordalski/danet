@@ -30,35 +30,35 @@ namespace bsys = boost::system;
 
 namespace danet
 {
-  netbase::netbase(shared_ptr<protocol> pro) : work(service)
+  netbase::netbase(shared_ptr<protocol> pro) : _work_object(_service)
   {
     // Dodaj wątek
-    workers.push_back(new thread(bind(&netbase::io_worker, this)));
-    workers.push_back(new thread(bind(&netbase::io_worker, this)));
-    workers.push_back(new thread(bind(&netbase::io_worker, this)));
-    workers.push_back(new thread(bind(&netbase::io_worker, this)));
+    _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
+    _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
+    _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
+    _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
     pro->nb = this;
-    this->proto = pro;
+    this->_proto = pro;
     // TODO
   }
 
   netbase::~netbase()
   {
-    this->service.stop();
-    for(thread *t: this->workers)
+    this->_service.stop();
+    for(thread *t: this->_worker_objects)
     {
       t->join();
     }
   }
 
-  void netbase::io_worker()
+  void netbase::_io_worker()
   {
     while( true )
     {
       try
       {
         boost::system::error_code ec;
-        this->service.run( ec );
+        this->_service.run( ec );
         if( ec )
         {
           // Internal error (e.g. io_service stopped) - exit!
@@ -72,7 +72,7 @@ namespace danet
     }
   }
 
-  netbase::handle netbase::listen_at(address* adr)
+  netbase::handle netbase::_listen(address* adr)
   {
     shared_ptr<acceptor> acc = adr->acceptor();
     if(!acc->run(this))
@@ -80,19 +80,19 @@ namespace danet
       return 0;
     }
 
-    acceptors_oid++;
-    if(acceptors_oid > 1000000000) acceptors_oid = 1;
-    while(acceptors.find(acceptors_oid) != acceptors.end()) acceptors_oid++;
-    acceptors[acceptors_oid] = acc;
+    _acceptors_oid++;
+    if(_acceptors_oid > 1000000000) _acceptors_oid = 1;
+    while(_acceptors.find(_acceptors_oid) != _acceptors.end()) _acceptors_oid++;
+    _acceptors[_acceptors_oid] = acc;
 
-    return (netbase::handle)(0xFFFFFFFF - acceptors_oid);
+    return (netbase::handle)(0xFFFFFFFF - _acceptors_oid);
   }
 
-  netbase::handle netbase::connect_to(address* adr)
+  netbase::handle netbase::_connect(address* adr)
   {
     shared_ptr<connection> con = adr->connection();
 
-    netbase::handle h = this->add_connection(con);
+    netbase::handle h = this->_connection_add(con);
 
     if(!con->run(this, h))
     {
@@ -105,101 +105,101 @@ namespace danet
     return (netbase::handle)(h);
   }
 
-  void netbase::close_resource(netbase::handle h)
+  void netbase::_close(netbase::handle h)
   {
     // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
       // Usuń połączenie...
       int cid = h;
-      connections.erase(cid);
+      _connections.erase(cid);
     }
     else
     {
       // Usuń akceptor...
       int aid = (0xFFFFFFFF - h);
-      acceptors.erase(aid);
+      _acceptors.erase(aid);
     }
   }
 
-  void netbase::send_to_resource(std::shared_ptr<packet> v, netbase::handle h)
+  void netbase::_do_send(std::shared_ptr<packet> v, netbase::handle h)
   {
     // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
-      connections[h]->send_data(v);
+      _connections[h]->do_send(v);
     }
     // else invalid handle...
   }
 
-  void netbase::recv_message(packet& v, user& s)
+  void netbase::_recv(packet& v, user& s)
   {
-    msgs_m.lock();
-    if(!msgs.empty())
+    _msgs_m.lock();
+    if(!_msgs.empty())
     {
-      v = move(msgs.front().second);
-      s = msgs.front().first;
-      msgs.pop();
+      v = move(_msgs.front().second);
+      s = _msgs.front().first;
+      _msgs.pop();
     }
-    msgs_m.unlock();
+    _msgs_m.unlock();
   }
 
-  void netbase::message_received(packet p, user s)
+  void netbase::_on_receive(packet p, user s)
   {
-    msgs_m.lock();
-    msgs.push(pair<int,packet>(s, move(p)));
-    msgs_m.unlock();
+    _msgs_m.lock();
+    _msgs.push(pair<int,packet>(s, move(p)));
+    _msgs_m.unlock();
   }
 
-  void netbase::send_message(std::vector<byte> v, const std::vector<user>& s)
+  void netbase::_send(std::vector<byte> v, const std::vector<user>& s)
   {
-    this->proto->send_data(v,s);
+    this->_proto->do_send(v,s);
   }
 
-  netbase::handle netbase::add_connection(std::shared_ptr<connection> con)
+  netbase::handle netbase::_connection_add(std::shared_ptr<connection> con)
   {
-    connections_m.lock();
-    connections_oid++;
-    if(connections_oid > 1000000000) connections_oid = 1;
-    while(connections.find(connections_oid) != connections.end()) connections_oid++;
-    connections[connections_oid] = con;
-    netbase::handle h = connections_oid;
-    connections_m.unlock();
+    _connections_m.lock();
+    _connections_oid++;
+    if(_connections_oid > 1000000000) _connections_oid = 1;
+    while(_connections.find(_connections_oid) != _connections.end()) _connections_oid++;
+    _connections[_connections_oid] = con;
+    netbase::handle h = _connections_oid;
+    _connections_m.unlock();
     return h;
   }
 
-  void netbase::rem_connection(handle h)
+  void netbase::_connection_rem(handle h)
   {
     // TODO: A co jeśli uchwyt jest niepoprawny?
-    connections_m.lock();
-    connections.erase(h);
-    connections_m.unlock();
+    _connections_m.lock();
+    _connections.erase(h);
+    _connections_m.unlock();
   }
 
-  shared_ptr<danet::address> netbase::get_address(handle h)
+  shared_ptr<danet::address> netbase::_get_address(handle h)
   {
     // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
       // Usuń połączenie...
       int cid = h;
-      return connections[cid]->get_address();
+      return _connections[cid]->get_address();
     }
     else
     {
       // Usuń akceptor...
       int aid = (0xFFFFFFFF - h);
-      return acceptors[aid]->get_address();
+      return _acceptors[aid]->get_address();
     }
   }
 
-  set<netbase::user> netbase::get_users_list()
+  set<netbase::user> netbase::_get_users_list()
   {
-    return this->proto->get_users();
+    return this->_proto->get_users();
   }
 
-  netbase::user netbase::get_id()
+  netbase::user netbase::_get_id()
   {
-    return this->proto->get_id();
+    return this->_proto->get_id();
   }
 }

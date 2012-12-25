@@ -72,7 +72,7 @@ namespace danet
      */
     handle listen(address *adr)
     {
-      return this->listen_at(adr);
+      return this->_listen(adr);
     }
 
     /**
@@ -83,7 +83,7 @@ namespace danet
      */
     handle connect(address *adr)
     {
-      return this->connect_to(adr);
+      return this->_connect(adr);
     }
 
     /**
@@ -93,7 +93,7 @@ namespace danet
      */
     void close(handle h)
     {
-      this->close_resource(h);
+      this->_close(h);
     }
 
     /**
@@ -104,7 +104,7 @@ namespace danet
      */
     void send(const T &m, const std::vector<user> &s)
     {
-      this->send_message(T::get_data(m), s);
+      this->_send(T::get_data(m), s);
     }
 
     /**
@@ -117,7 +117,7 @@ namespace danet
     {
       user uid = 0;
       std::vector<byte> v;
-      this->recv_message(v, uid);
+      this->_recv(v, uid);
       if(uid > 0)
         m = T::set_data(v);
       return uid;
@@ -125,17 +125,17 @@ namespace danet
 
     std::set<user> users()
     {
-      return this->get_users_list();
+      return this->_get_users_list();
     }
 
     std::shared_ptr<danet::address> address(handle h)
     {
-      return this->get_address(h);
+      return this->_get_address(h);
     }
 
     user id()
     {
-      return this->get_id();
+      return this->_get_id();
     }
   };
 }

@@ -49,7 +49,7 @@ namespace danet
     virtual bool run(netbase *nb, netbase::handle id) = 0;
     virtual bool run(netbase::handle id) = 0;
 
-    virtual void send_data(std::shared_ptr<packet> data) = 0;
+    virtual void do_send(std::shared_ptr<packet> data) = 0;
 
     virtual std::shared_ptr<danet::address> get_address() = 0;
 
@@ -61,27 +61,27 @@ namespace danet
 
     boost::asio::io_service & get_ioservice()
     {
-      return nb->service;
+      return nb->_service;
     }
 
-    void proto_data_recieved(packet pkg)
+    void proto_on_recieve(packet pkg)
     {
-      return nb->proto->data_received(move(pkg));
+      return nb->_proto->on_receive(move(pkg));
     }
 
     void proto_add_connection()
     {
-      return nb->proto->add_connection(id);
+      return nb->_proto->connection_add(id);
     }
 
     void proto_rem_connection()
     {
-      return nb->proto->rem_connection(id);
+      return nb->_proto->connection_rem(id);
     }
 
     void netbase_rem_connection()
     {
-      nb->rem_connection(id);
+      nb->_connection_rem(id);
     }
 
   private:

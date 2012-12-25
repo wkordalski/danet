@@ -62,25 +62,25 @@ namespace danet
     ~netbase();
 
   protected:
-    handle listen_at(address *adr);
-    handle connect_to(address *adr);
-    void close_resource(handle h);
-    void send_message(std::vector<byte> v, const std::vector<user> &s);
-    void recv_message(std::vector<byte> &v, user& s);
-    void send_to_resource(std::shared_ptr<packet> v, handle h);
-    std::set<user> get_users_list();
-    void message_received(packet p, user s);
-    handle add_connection(std::shared_ptr<connection> con);
-    void rem_connection(handle h);
-    std::shared_ptr<danet::address> get_address(handle h);
-    netbase::user get_id();
+    handle _listen(address *adr);
+    handle _connect(address *adr);
+    void _close(handle h);
+    void _send(std::vector<byte> v, const std::vector<user> &s);
+    void _recv(std::vector<byte> &v, user& s);
+    void _do_send(std::shared_ptr<packet> v, handle h);
+    std::set<user> _get_users_list();
+    void _on_receive(packet p, user s);
+    handle _connection_add(std::shared_ptr<connection> con);
+    void _connection_rem(handle h);
+    std::shared_ptr<danet::address> _get_address(handle h);
+    netbase::user _get_id();
 
-    boost::asio::io_service & get_service()
+    boost::asio::io_service & _get_service()
     {
-      return this->service;
+      return this->_service;
     }
 
-    void io_worker();
+    void _io_worker();
 
   private:
 protected:
@@ -108,19 +108,19 @@ protected:
     //std::vector<std::shared_ptr<connection>> unsorted;
     //int state = 0;
     //std::mutex unsm;
-    boost::asio::io_service service;
-    boost::asio::io_service::work work;
-    std::vector<std::thread *> workers;
-    std::map<int,std::shared_ptr<acceptor>> acceptors;
-    int acceptors_oid = 0;
-    std::map<int,std::shared_ptr<connection>> connections;
-    int connections_oid = 0;
-    std::mutex connections_m;
+    boost::asio::io_service _service;
+    boost::asio::io_service::work _work_object;
+    std::vector<std::thread *> _worker_objects;
+    std::map<int,std::shared_ptr<acceptor>> _acceptors;
+    int _acceptors_oid = 0;
+    std::map<int,std::shared_ptr<connection>> _connections;
+    int _connections_oid = 0;
+    std::mutex _connections_m;
 
-    std::shared_ptr<danet::protocol> proto;
+    std::shared_ptr<danet::protocol> _proto;
 
-    std::queue<std::pair<int,packet>> msgs;
-    std::mutex msgs_m;
+    std::queue<std::pair<int,packet>> _msgs;
+    std::mutex _msgs_m;
   };
 }
 

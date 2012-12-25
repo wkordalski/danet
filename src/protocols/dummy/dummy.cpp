@@ -61,7 +61,7 @@ namespace danet
       // TODO
     }
 
-    void dummy::add_connection(netbase::handle h)
+    void dummy::connection_add(netbase::handle h)
     {
       if(isserver)
       {
@@ -75,7 +75,7 @@ namespace danet
           p->push_back(0);  // CHECKSUM
           p->push_back(0);  //
           insert_int(uid, *p);
-          this->netbase_send_to_resource(p, h);
+          this->netbase_do_send(p, h);
         }
         {
           // WYŚLIJ INFO INNYM
@@ -87,7 +87,7 @@ namespace danet
           insert_int(uid, *p);
           for(pair<netbase::user, netbase::handle> P : add)
           {
-            this->netbase_send_to_resource(p, P.second);
+            this->netbase_do_send(p, P.second);
           }
         }
         {
@@ -100,7 +100,7 @@ namespace danet
           insert_int(this->usr.size(), *p);
           for(netbase::user U : this->usr)
             insert_int(U, *p);
-          this->netbase_send_to_resource(p, h);
+          this->netbase_do_send(p, h);
         }
         add[uid] = h;
       }
@@ -113,7 +113,7 @@ namespace danet
       }
     }
 
-    void dummy::data_received(packet pkg)
+    void dummy::on_receive(packet pkg)
     {
       if(this->isserver)
       {
@@ -141,7 +141,7 @@ namespace danet
           {
             auto it = add.find(U);
             if(it != add.end())
-              this->netbase_send_to_resource(p, it->second);
+              this->netbase_do_send(p, it->second);
           }
         }
       }
@@ -200,7 +200,7 @@ namespace danet
       }
     }
 
-    void dummy::rem_connection(netbase::handle h)
+    void dummy::connection_rem(netbase::handle h)
     {
       // TODO
       if(this->isserver)
@@ -227,7 +227,7 @@ namespace danet
         insert_int(uid, *p);
         for(pair<netbase::user, netbase::handle> P : add)
         {
-          this->netbase_send_to_resource(p, P.second);
+          this->netbase_do_send(p, P.second);
         }
       }
       else
@@ -242,7 +242,7 @@ namespace danet
       }
     }
 
-    void dummy::send_data(packet p, const std::vector<netbase::user>& u)
+    void dummy::do_send(packet p, const std::vector<netbase::user>& u)
     {
       if(this->isserver)
       {
@@ -260,7 +260,7 @@ namespace danet
         insert_int(u.size(), *nts);
         for(netbase::user U : u) insert_int(U, *nts);
         for(byte B : p) nts->push_back(B);
-        this->netbase_send_to_resource(nts, this->srv);
+        this->netbase_do_send(nts, this->srv);
       }
     }
 

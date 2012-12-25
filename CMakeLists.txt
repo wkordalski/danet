@@ -50,7 +50,8 @@ foreach(p LIB BIN INC CMAKE)
 endforeach()
 
 ### NEEDED PACKAGES
-find_package( Boost COMPONENTS system program_options REQUIRED )
+find_package( Boost COMPONENTS system REQUIRED )
+find_package( Boost COMPONENTS program_options )
 find_package (Threads)
 
 # DEBUG & RELEASE
@@ -155,16 +156,18 @@ install(EXPORT DanetLibraryDepends DESTINATION
 
 ################################################################################
 
-add_executable( dummy-server EXCLUDE_FROM_ALL test/dummy-server.cpp )
-add_executable( chat EXCLUDE_FROM_ALL test/chat.cpp )
+if(Boost_PROGRAM_OPTIONS_FOUND)
+  add_executable( dummy-server EXCLUDE_FROM_ALL test/dummy-server.cpp )
+  add_executable( chat EXCLUDE_FROM_ALL test/chat.cpp )
 
-target_link_libraries(dummy-server
-  danet
-  ${Boost_PROGRAM_OPTIONS_LIBRARY}
-)
-target_link_libraries(chat
-  danet
-  ${Boost_PROGRAM_OPTIONS_LIBRARY}
-)
+  target_link_libraries(dummy-server
+    danet
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  )
+  target_link_libraries(chat
+    danet
+    ${Boost_PROGRAM_OPTIONS_LIBRARY}
+  )
+endif(Boost_PROGRAM_OPTIONS_FOUND)
 
 ################################################################################

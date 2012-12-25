@@ -37,7 +37,7 @@ namespace danet
       // TODO: implement
     }
 
-    void basic<0>::data_received(packet pkg)
+    void basic<0>::on_receive(packet pkg)
     {
       // TODO
       /*if(pkg.size() < 8)
@@ -70,21 +70,21 @@ namespace danet
       this->netbase_add_received_message(pkg, 1);
     }
 
-    void basic<0>::send_data(packet p, const std::vector<netbase::user>& u)
+    void basic<0>::do_send(packet p, const std::vector<netbase::user>& u)
     {
       // TODO
       // Stwórz pakiet do wysłania i wyślij do handle
       //this->add_message_sending(p, uchwyt)
       std::shared_ptr<packet> pp(new packet(move(p)));
-      this->netbase_send_to_resource(pp, 1);
+      this->netbase_do_send(pp, 1);
     }
 
-    void basic<0>::add_connection(netbase::handle h)
+    void basic<0>::connection_add(netbase::handle h)
     {
       // TODO
     }
 
-    void basic<0>::rem_connection(netbase::handle h)
+    void basic<0>::connection_rem(netbase::handle h)
     {
       // TODO
     }
