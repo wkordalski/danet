@@ -34,15 +34,35 @@ namespace danet
   class acceptor;
   class connection;
 
+  /**
+   * The address base class.
+   */
   class address
   {
     friend class netbase;
   public:
+    /**
+     * Distroys the address object.
+     */
     virtual ~address() {};
+
+    /**
+     * Checks if the address is valid
+     * @return True if address is valid, otherwise false.
+     */
     virtual bool valid() = 0;
 
   protected:
+    /**
+     * Creates an acceptor based on address.
+     * @return Pointer to acceptor.
+     */
     virtual std::shared_ptr<danet::acceptor>     acceptor() = 0;
+
+    /**
+     * Creates a connection based on address.
+     * @return Pointer to connection.
+     */
     virtual std::shared_ptr<danet::connection>   connection() = 0;
   };
 }

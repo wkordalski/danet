@@ -49,6 +49,10 @@ namespace danet
 namespace danet
 {
   class protocol;
+
+  /**
+   * The base class of network controllers.
+   */
   class netbase
   {
   public:
@@ -56,30 +60,115 @@ namespace danet
     typedef unsigned int handle;
 
   protected:
+    /**
+     * Creates new instance of netbase.
+     * @param pro Communication protocol to use.
+     */
     netbase(std::shared_ptr<protocol> pro);
+
     netbase(const netbase&) = delete;
     netbase(netbase &&nb) = delete;
+
+    /**
+     * Distroys this netbase instance.
+     */
     ~netbase();
 
   protected:
+    /**
+     * Asks the network controller to listen on specified address.
+     * @param adr The addres to listen on.
+     * @return Handle to acceptor.
+     */
     handle _listen(address *adr);
+
+    /**
+     * Asks the network controller to connect to specified address.
+     * @param adr The address to connect to.
+     * @return Handle to connection.
+     */
     handle _connect(address *adr);
+
+    /**
+     * Closes specified acceptor or connection
+     * @param h Handle to acceptor or connection.
+     */
     void _close(handle h);
+
+    /**
+     * Sends data to specified users.
+     * @param v The data to send.
+     * @param s Users to send the data to.
+     */
     void _send(std::vector<byte> v, const std::vector<user> &s);
+
+    /**
+     * Receives data from the message incomming queue.
+     * @param v The received data.
+     * @param s The sender of the data.
+     */
     void _recv(std::vector<byte> &v, user& s);
+
+    /**
+     * Called to send data by specified handle.
+     * Used by protocols.
+     * @param v The pointer to data to send.
+     * @param h The handle to connection to send data with.
+     */
     void _do_send(std::shared_ptr<packet> v, handle h);
+
+    /**
+     * Returns the users list in the network.
+     * @return THe users' IDs.
+     */
     std::set<user> _get_users_list();
+
+    /**
+     * Adds messages to incomming queue.
+     * Used by protocols.
+     * @param p The received data.
+     * @param s The sender of the data.
+     */
     void _on_receive(packet p, user s);
+
+    /**
+     * Adds the connection to connections pool.
+     * @param con The connection to add.
+     * @return Associated handle to the connection.
+     */
     handle _connection_add(std::shared_ptr<connection> con);
+
+    /**
+     * Removes the connection from the connections pool.
+     * @param h The handle to the connection.
+     */
     void _connection_rem(handle h);
+
+    /**
+     * Returns the address associated to the acceptor or connection.
+     * @param h The handle to the acceptor or connection.
+     * @return The pointer to the address.
+     */
     std::shared_ptr<danet::address> _get_address(handle h);
+
+    /**
+     * Returns the ID associated to your network controller instance.
+     * @return The ID.
+     */
     netbase::user _get_id();
 
+    /**
+     * Returns the reference to Boost Asio Service
+     * @return The reference to Boost Asio Service.
+     */
     boost::asio::io_service & _get_service()
     {
       return this->_service;
     }
 
+    /**
+     * Runs the Boost Asio Service tasks.
+     */
     void _io_worker();
 
   private:
@@ -89,37 +178,59 @@ protected:
     friend class acceptor;
     friend class danet::protocol;
 
-    //void received(message msg);
-    //void accepted(const boost::system::error_code & ec, std::shared_ptr<connection>);
-    //void connected(const boost::system::error_code & ec, std::shared_ptr< connection > con);
-    //void add_message(message m);
-    //void bconnect(std::string ip, int port);
-    //void bconnect(std::string ip, int port, int hid);
-    //void inform_ips(std::shared_ptr<connection> c);
-    //void suggest_id(std::shared_ptr<connection> c);
-    //void recv_ips(message m);
-
-    //int myid = -1;
-    //std::vector<std::shared_ptr<connection>> pairs;
-    //std::mutex parm;
-    //int pairs_count;
-    //std::queue<message> rcvq;
-    //std::mutex rcvm;
-    //std::vector<std::shared_ptr<connection>> unsorted;
-    //int state = 0;
-    //std::mutex unsm;
+    /**
+     * Boost Asio Service object.
+     */
     boost::asio::io_service _service;
+
+    /**
+     * Boost Asio Work object.
+     */
     boost::asio::io_service::work _work_object;
+
+    /**
+     * Threads that are working for Boost Asio Service.
+     */
     std::vector<std::thread *> _worker_objects;
+
+    /**
+     * The acceptors pool
+     */
     std::map<int,std::shared_ptr<acceptor>> _acceptors;
+
+    /**
+     * Variable used to generate new acceptor handles.
+     */
     int _acceptors_oid = 0;
+
+    /**
+     * The connections pool
+     */
     std::map<int,std::shared_ptr<connection>> _connections;
+
+    /**
+     * Variable used to generate new connection handles.
+     */
     int _connections_oid = 0;
+
+    /**
+     * Mutex locking the connections pool.
+     */
     std::mutex _connections_m;
 
+    /**
+     * Pointer to the communication protocol instance.
+     */
     std::shared_ptr<danet::protocol> _proto;
 
+    /**
+     * Incomming message queue.
+     */
     std::queue<std::pair<int,packet>> _msgs;
+
+    /**
+     * Mutex locking the incomming message queue.
+     */
     std::mutex _msgs_m;
   };
 }
