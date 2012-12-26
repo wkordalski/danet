@@ -50,8 +50,9 @@ foreach(p LIB BIN INC CMAKE)
 endforeach()
 
 ### NEEDED PACKAGES
-find_package( Boost COMPONENTS system REQUIRED )
+find_package( Boost COMPONENTS system python REQUIRED )
 find_package( Boost COMPONENTS program_options )
+find_package( PythonLibs 2.7 REQUIRED )
 find_package (Threads)
 
 # DEBUG & RELEASE
@@ -64,7 +65,8 @@ include_directories(
   include/
 
   ${Boost_SYSTEM_INCLUDE_DIR}
-  ${Boost_PROGRAM_OPTIONS_INCLUDE_DIR}
+  ${Boost_PYTHON_INCLUDE_DIR}
+  ${PYTHON_INCLUDE_DIRS}
 
   ${PROJECT_BINARY_DIR}
 )
@@ -82,10 +84,14 @@ add_library(danet SHARED
   src/address/tcp_ip_address.cpp
   src/acceptors/tcp_ip_acceptor.cpp
   src/connections/tcp_ip_connection.cpp
+
+  python/binding.cpp
 )
 
 target_link_libraries(danet
   ${Boost_SYSTEM_LIBRARY}
+  ${Boost_PYTHON_LIBRARY}
+  ${PYTHON_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -157,6 +163,7 @@ install(EXPORT DanetLibraryDepends DESTINATION
 ################################################################################
 
 if(Boost_PROGRAM_OPTIONS_FOUND)
+  include_directories ( ${Boost_PROGRAM_OPTIONS_INCLUDE_DIR} )
   add_executable( dummy-server EXCLUDE_FROM_ALL test/dummy-server.cpp )
   add_executable( chat EXCLUDE_FROM_ALL test/chat.cpp )
 
