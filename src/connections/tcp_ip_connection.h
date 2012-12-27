@@ -21,8 +21,11 @@
 #ifndef __DANET_TCP_IP_CONNECTION_H
 #define	__DANET_TCP_IP_CONNECTION_H
 
+#include "netbase.h"
 #include "connection.h"
 #include "../acceptors/tcp_ip_acceptor.h"
+
+#include <memory>
 
 namespace danet
 {

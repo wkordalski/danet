@@ -27,13 +27,22 @@
 
 namespace danet
 {
+  /**
+   * Contains IP family connections and acceptors.
+   */
   namespace ip
   {
+    /**
+     * Contains TCP/IP connections and acceptors.
+     */
     namespace tcp
     {
       class acceptor;
       class connection;
 
+      /**
+       * Represents TCP/IP address.
+       */
       class address : public danet::address
       {
         friend class danet::ip::tcp::acceptor;
