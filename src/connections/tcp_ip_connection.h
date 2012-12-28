@@ -45,7 +45,16 @@ namespace danet
         virtual ~connection();
 
       protected:
+        /**
+         * Creates new connection based on specified address.
+         * @param adr The address.
+         */
         connection(const danet::ip::tcp::address &adr);
+
+        /**
+         * Creates connection instance with specified netbase.
+         * @param nb Pointer to netbase.
+         */
         connection(netbase *nb);
         virtual bool run(netbase *nb, netbase::handle id);
         virtual bool run(netbase::handle id);
@@ -54,32 +63,99 @@ namespace danet
 
         virtual std::shared_ptr<danet::address> get_address();
 
+        /**
+         * Makes the connection starts listening for data.
+         */
         void listen();
 
+        /**
+         * Starts receiving data.
+         */
         void recv();
+
+        /**
+         * Starts sending data.
+         */
         void send();
 
+        /**
+         * Invoked when the connection starts beeing valid.
+         * @param ec The errorcode.
+         */
         void on_connect(const boost::system::error_code &ec);
+
+        /**
+         * Invoked when the connection received message header.
+         * @param ec The error code
+         * @param bt Number of bytes received.
+         */
         void on_header(const boost::system::error_code &ec, const size_t &bt);
+
+        /**
+         * Invoked when the connection received message body.
+         * @param ec The error code.
+         * @param bt Number of bytes received.
+         */
         void on_body(const boost::system::error_code &ec, const size_t &bt);
+
+        /**
+         * Invoked when a message has been sent.
+         * @param ec The error code.
+         * @param bt Number of bytes sent.
+         */
         void on_send(const boost::system::error_code &ec, const size_t &bt);
+
+        /**
+         * Invoked when a message header has been sent.
+         * @param ec The error code.
+         * @param bt Number of bytes sent.
+         */
         void on_hsend(const boost::system::error_code &ec, const size_t &bt);
 
-        // Address to use
+        /**
+         * The address associated to connection.
+         */
         danet::ip::tcp::address adr;
 
-        // Socket used to communicate with other machine
+        /**
+         * Pointer to Boost Asio Socket object.
+         */
         boost::asio::ip::tcp::socket *sck;
 
         // Buffer for header
+        /**
+         * Header receiving buffer.
+         */
         byte rcv_b[4];
+
+        /**
+         * Data receiving buffer.
+         */
         std::vector<byte> rcv_d;
+
+        /**
+         * Receiving mutex.
+         */
         std::mutex rcv_m;
 
-        // Kolejka danych wysyłanych i jej mutex
+        /**
+         * Message sending queue.
+         */
         std::queue<std::shared_ptr<packet>> snd_q;
+
+        /**
+         * Sending mutex.
+         */
         std::mutex snd_m;
+
+        /**
+         * Header sending buffer.
+         */
         byte snd_b[4];
+
+        /**
+         * Data sending buffer.
+         */
         std::vector<byte> snd_d;
 
       private:

@@ -51,11 +51,19 @@ namespace danet
         std::string ip;
         int port;
       public:
+        /**
+         * Creates new TCP/IP address instance.
+         * @param ip The IP address or domain name.
+         * @param port Port number.
+         */
         address(std::string ip, int port);
         ~address();
         bool valid();
 
       protected:
+        /**
+         * Creates invalid address.
+         */
         address();
 
         std::shared_ptr<danet::acceptor>     acceptor();
