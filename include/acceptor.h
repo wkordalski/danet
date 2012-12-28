@@ -36,35 +36,64 @@ namespace danet
 
 namespace danet
 {
+  /**
+   * Base class for acceptors
+   */
   class acceptor
   {
     friend netbase;
   public:
+    /**
+     * Distroys the acceptor
+     */
     virtual ~acceptor() {};
   private:
   protected:
+    /**
+     * Runs acceptor for specified netbase
+     * @param nb The netbase pointer
+     * @return True if succedded, otherwise false.
+     */
     virtual bool run(netbase *nb) = 0;
+
+    /**
+     * Returns the address on what is the acceptor running.
+     * @return Pointer to the address.
+     */
     virtual std::shared_ptr<danet::address> get_address() = 0;
 
-    // Netbase object pointer
+    /**
+     * Netbase object pointer.
+     */
     netbase *nb;
 
+    /**
+     * Returns Boost Asio Service associated to the netbase.
+     * @return Reference to Boost Asio Service.
+     */
     boost::asio::io_service & get_ioservice()
     {
       return nb->_service;
     }
 
+    /**
+     * Adds new connection to the netbase.
+     * @param con The connection to add.
+     * @return Handle associated to the connection.
+     */
     netbase::handle netbase_add_connection(std::shared_ptr<connection> con)
     {
       return this->nb->_connection_add(con);
     }
 
+    /**
+     * Informs communication protocol about new connection.
+     * @param h Handle to the connection.
+     */
     void proto_add_connection(netbase::handle h)
     {
       return nb->_proto->connection_add(h);
     }
-
-
   };
 }
 #endif	/* ACCEPTOR_H */

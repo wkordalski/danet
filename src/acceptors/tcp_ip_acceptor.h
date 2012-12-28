@@ -34,22 +34,44 @@ namespace danet
   {
     namespace tcp
     {
+      /**
+       * Represents TCP/IP acceptor
+       */
       class acceptor : public danet::acceptor
       {
         friend class danet::ip::tcp::address;
       public:
         virtual ~acceptor();
       protected:
+        /**
+         * Creates acceptor based od an address.
+         * @param adr The address
+         */
         acceptor(const danet::ip::tcp::address &adr);
+
         virtual bool run(netbase *nb);
         virtual std::shared_ptr<danet::address> get_address();
+
+        /**
+         * Makes the acceptor starts accepting connections.
+         */
         void accept();
+
+        /**
+         * Invoked when a connection has been accepted.
+         * @param ec Error code
+         * @param con Pointer to the connection
+         */
         void on_accept(const boost::system::error_code & ec, std::shared_ptr<danet::ip::tcp::connection> con);
 
-        // Address...
+        /**
+         * The address associated to acceptor.
+         */
         danet::ip::tcp::address adr;
 
-        // Acceptor object pointer
+        /**
+         * Pointer to Boost Asio Acceptor object.
+         */
         boost::asio::ip::tcp::acceptor *acc = nullptr;
       };
     }

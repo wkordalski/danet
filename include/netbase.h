@@ -26,9 +26,17 @@
 namespace danet
 {
   class netbase;
+
+  /**
+   * Type representing byte
+   */
   typedef unsigned char byte;
   class acceptor;
   class connection;
+
+  /**
+   * Type representing network packet
+   */
   typedef std::vector<byte> packet;
 }
 
@@ -56,7 +64,14 @@ namespace danet
   class netbase
   {
   public:
+    /**
+     * Represents the network user id type
+     */
     typedef unsigned int user;
+
+    /**
+     * Represents the network manager handle type
+     */
     typedef unsigned int handle;
 
   protected:

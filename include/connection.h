@@ -38,54 +38,98 @@ namespace danet
 
 namespace danet
 {
+  /**
+   * Base class for connections.
+   */
   class connection
   {
     friend class netbase;
     friend class acceptor;
   public:
+    /**
+     * Distroys the connection.
+     */
     virtual ~connection() {};
 
   protected:
+    /**
+     * Runs connection for specified namespace.
+     * @param nb Pointer to netbase.
+     * @param id Handle to the connection.
+     * @return True if succedded, otherwise false.
+     */
     virtual bool run(netbase *nb, netbase::handle id) = 0;
+
+    /**
+     * Runs connection (netbase specified earlier)
+     * @param id Handle to the connection.
+     * @return True if succedded, otherwise false.
+     */
     virtual bool run(netbase::handle id) = 0;
 
+    /**
+     * Sends data by the connection.
+     * @param data Data to send.
+     */
     virtual void do_send(std::shared_ptr<packet> data) = 0;
 
+    /**
+     * Returns the address on what is the connection running.
+     * @return Pointer to the address.
+     */
     virtual std::shared_ptr<danet::address> get_address() = 0;
 
-    // Netbase object pointer
+    /**
+     * Netbase object pointer.
+     */
     netbase *nb;
 
-    // Connection id
+    /**
+     * Connection handle
+     */
     netbase::handle id;
 
+    /**
+     * Returns Boost Asio Service associated to the netbase.
+     * @return Reference to Boost Asio Service.
+     */
     boost::asio::io_service & get_ioservice()
     {
       return nb->_service;
     }
 
+    /**
+     * Informs communication protocol about received data.
+     * @param pkg Received data.
+     */
     void proto_on_recieve(packet pkg)
     {
       return nb->_proto->on_receive(move(pkg));
     }
 
+    /**
+     * Informs communication protocol about new connection.
+     */
     void proto_add_connection()
     {
       return nb->_proto->connection_add(id);
     }
 
+    /**
+     * Informs communication protocol about removed connection.
+     */
     void proto_rem_connection()
     {
       return nb->_proto->connection_rem(id);
     }
 
+    /**
+     * Removes connection from netbase connection pool.
+     */
     void netbase_rem_connection()
     {
       nb->_connection_rem(id);
     }
-
-  private:
-
   };
 }
 #endif

@@ -29,6 +29,9 @@ namespace danet
 {
   namespace protocols
   {
+    /**
+     * Basic communication protocol (version 0)
+     */
     template<>
     class basic<0> : public danet::protocol
     {
