@@ -37,7 +37,7 @@ namespace danet
   /**
    * Network controller - manages connections and provides data
    *
-   * @param T Messages type you want to send or receive.
+   * @tparam T Messages type you want to send or receive.
    * The message type has to contain static functions get_data i set_data.
    */
   template<class T>

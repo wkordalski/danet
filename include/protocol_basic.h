@@ -27,6 +27,10 @@ namespace danet
 {
   namespace protocols
   {
+    /**
+     * Basic communication protocol family
+     * @tparam version Protocol version
+     */
     template<unsigned int version>
     class basic : public danet::protocol
     {

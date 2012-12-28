@@ -33,6 +33,9 @@ namespace danet
   {
     namespace tcp
     {
+      /**
+       * Represents TCP/IP connection
+       */
       class connection : public danet::connection
       {
         friend class danet::netbase;

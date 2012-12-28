@@ -27,6 +27,9 @@ namespace danet
 {
   namespace protocols
   {
+    /**
+     * Dummy communication network (supports client-server networks)
+     */
     class dummy : public danet::protocol
     {
     public:
