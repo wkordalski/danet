@@ -51,9 +51,6 @@ namespace danet
 
         // Acceptor object pointer
         boost::asio::ip::tcp::acceptor *acc = nullptr;
-
-        // Password data
-        std::vector<byte> pwd;
       };
     }
   }

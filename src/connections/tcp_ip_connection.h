@@ -59,9 +59,6 @@ namespace danet
         void on_send(const boost::system::error_code &ec, const size_t &bt);
         void on_hsend(const boost::system::error_code &ec, const size_t &bt);
 
-        // Netbase object pointer
-        //netbase *nb;
-
         // Address to use
         danet::ip::tcp::address adr;
 
@@ -79,10 +76,6 @@ namespace danet
         byte snd_b[4];
         std::vector<byte> snd_d;
 
-        //unsigned char head[8];
-        //std::vector<unsigned char> buff;
-        //std::mutex rcvm;
-        //int ct, cs, cr;     // Receiving data
       private:
 
       };
