@@ -92,16 +92,23 @@ namespace danet
   {
     shared_ptr<connection> con = adr->connection();
 
-    netbase::handle h = this->_connection_add(con);
+    _connections_m.lock();
+    _connections_oid++;
+    if(_connections_oid > 1000000000) _connections_oid = 1;
+    while(_connections.find(_connections_oid) != _connections.end()
+        || _connecting.find(_connections_oid) != _connecting.end())
+    {
+      _connections_oid++;
+    }
+    _connecting[_connections_oid] = con;
+    netbase::handle h = _connections_oid;
+    _connections_m.unlock();
 
     if(!con->run(this, h))
     {
       return 0;
     }
 
-
-    //this->connections.push_back(con);
-    //this->proto->add_connection((netbase::handle)connections_oid); <- ŹLE
     return (netbase::handle)(h);
   }
 
@@ -161,7 +168,11 @@ namespace danet
     _connections_m.lock();
     _connections_oid++;
     if(_connections_oid > 1000000000) _connections_oid = 1;
-    while(_connections.find(_connections_oid) != _connections.end()) _connections_oid++;
+    while(_connections.find(_connections_oid) != _connections.end()
+        || _connecting.find(_connections_oid) != _connecting.end())
+    {
+      _connections_oid++;
+    }
     _connections[_connections_oid] = con;
     netbase::handle h = _connections_oid;
     _connections_m.unlock();
@@ -172,7 +183,23 @@ namespace danet
   {
     // TODO: A co jeśli uchwyt jest niepoprawny?
     _connections_m.lock();
-    _connections.erase(h);
+    auto it = _connections.find(h);
+    if(it != _connections.end())
+    {
+      _connections.erase(it);
+    }
+    else
+    {
+      it = _connecting.find(h);
+      if(it != _connecting.end())
+      {
+        _connecting.erase(it);
+      }
+      else
+      {
+        // TODO - no such handle
+      }
+    }
     _connections_m.unlock();
   }
 
@@ -205,17 +232,39 @@ namespace danet
 
   set<netbase::handle> netbase::_get_connections()
   {
+    _connections_m.lock();
     set<netbase::handle> r;
     for(auto P : this->_connections)
       r.insert(P.first);
+    _connections_m.unlock();
     return r;
   }
 
   set<netbase::handle> netbase::_get_acceptors()
   {
+    _connections_m.lock();
     set<netbase::handle> r;
     for(auto P : this->_acceptors)
       r.insert(P.first);
+    _connections_m.unlock();
     return r;
+  }
+
+  set<netbase::handle> netbase::_get_connecting()
+  {
+    _connections_m.lock();
+    set<netbase::handle> r;
+    for(auto P : this->_connecting)
+      r.insert(P.first);
+    _connections_m.unlock();
+    return r;
+  }
+
+  void netbase::_connection_tik(handle h)
+  {
+    _connections_m.lock();
+    _connections[h] = move(_connecting[h]);
+    _connecting.erase(h);
+    _connections_m.unlock();
   }
 }

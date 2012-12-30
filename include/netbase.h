@@ -159,6 +159,8 @@ namespace danet
      */
     void _connection_rem(handle h);
 
+    void _connection_tik(handle h);
+
     /**
      * Returns the address associated to the acceptor or connection.
      * @param h The handle to the acceptor or connection.
@@ -174,6 +176,7 @@ namespace danet
 
     std::set<handle> _get_connections();
     std::set<handle> _get_acceptors();
+    std::set<handle> _get_connecting();
 
     /**
      * Returns the reference to Boost Asio Service
@@ -225,6 +228,8 @@ protected:
      * The connections pool
      */
     std::map<int,std::shared_ptr<connection>> _connections;
+
+    std::map<int,std::shared_ptr<connection>> _connecting;
 
     /**
      * Variable used to generate new connection handles.

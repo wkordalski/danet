@@ -82,6 +82,7 @@ namespace danet
           this->netbase_rem_connection();
           return;
         }
+        this->netbase_tik_connection();
         this->proto_add_connection();
         this->listen();
       }

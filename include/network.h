@@ -156,6 +156,11 @@ namespace danet
     {
       return this->_get_acceptors();
     }
+
+    std::set<handle> connecting()
+    {
+      return this->_get_connecting();
+    }
   };
 }
 

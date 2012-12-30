@@ -123,6 +123,11 @@ namespace danet
       return nb->_proto->connection_rem(id);
     }
 
+    void netbase_tik_connection()
+    {
+      nb->_connection_tik(id);
+    }
+
     /**
      * Removes connection from netbase connection pool.
      */
