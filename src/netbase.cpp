@@ -23,6 +23,8 @@
 #include "acceptor.h"
 #include "connection.h"
 
+#include "address_invalid.h"
+
 using namespace std;
 
 namespace bnet = boost::asio;
@@ -33,8 +35,6 @@ namespace danet
   netbase::netbase(std::shared_ptr<protocol> pro) : _work_object(_service)
   {
     // Dodaj wątek
-    _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
-    _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
     _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
     _worker_objects.push_back(new thread(bind(&netbase::_io_worker, this)));
     pro->nb = this;
@@ -74,22 +74,26 @@ namespace danet
 
   netbase::handle netbase::_listen(address* adr)
   {
+    if(!adr || !adr->valid()) return 0;
     shared_ptr<acceptor> acc = adr->acceptor();
     if(!acc->run(this))
     {
       return 0;
     }
 
+    _connections_m.lock();
     _acceptors_oid++;
     if(_acceptors_oid > 1000000000) _acceptors_oid = 1;
     while(_acceptors.find(_acceptors_oid) != _acceptors.end()) _acceptors_oid++;
     _acceptors[_acceptors_oid] = acc;
+    _connections_m.unlock();
 
     return (netbase::handle)(0xFFFFFFFF - _acceptors_oid);
   }
 
   netbase::handle netbase::_connect(address* adr)
   {
+    if(!adr || !adr->valid()) return 0;
     shared_ptr<connection> con = adr->connection();
 
     _connections_m.lock();
@@ -114,19 +118,45 @@ namespace danet
 
   void netbase::_close(netbase::handle h)
   {
-    // TODO: A co jeśli uchwyt jest niepoprawny?
+    _connections_m.lock();
     if(h < 0x7FFFFFFF)
     {
       // Usuń połączenie...
       int cid = h;
-      _connections.erase(cid);
+      auto it = _connections.find(cid);
+      if(it != _connections.end())
+      {
+        _connections.erase(it);
+      }
+      else
+      {
+        it = _connecting.find(cid);
+        if(it != _connecting.end())
+        {
+          /// @todo Should I cancel connecting or somthing like this?
+          _connecting.erase(it);
+        }
+        else
+        {
+          // Not found - olewamy
+        }
+      }
     }
     else
     {
       // Usuń akceptor...
       int aid = (0xFFFFFFFF - h);
-      _acceptors.erase(aid);
+      auto it = _acceptors.find(aid);
+      if(it != _acceptors.end())
+      {
+        _acceptors.erase(it);
+      }
+      else
+      {
+        // Not found - olewamy
+      }
     }
+    _connections_m.unlock();
   }
 
   void netbase::_do_send(std::shared_ptr<packet> v, netbase::handle h)
@@ -134,9 +164,20 @@ namespace danet
     // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
-      _connections[h]->do_send(v);
+      _connections_m.lock();
+      auto it = _connections.find(h);
+      if(it != _connections.end())
+      {
+        it->second->do_send(v);
+      }
+      else
+      {
+        // Not found - olewamy
+      }
+      _connections_m.unlock();
     }
-    // else invalid handle...
+    // To nigdy nie powinno się zdarzyć
+    else assert(0);
   }
 
   void netbase::_recv(packet& v, user& s)
@@ -205,19 +246,47 @@ namespace danet
 
   shared_ptr<danet::address> netbase::_get_address(handle h)
   {
+    shared_ptr<address> R;
+    _connections_m.lock();
     // TODO: A co jeśli uchwyt jest niepoprawny?
     if(h < 0x7FFFFFFF)
     {
       // Usuń połączenie...
       int cid = h;
-      return _connections[cid]->get_address();
+      auto it = _connections.find(cid);
+      if(it != _connections.end())
+      {
+        R = it->second->get_address();
+      }
+      else
+      {
+        it = _connecting.find(cid);
+        if(it != _connecting.end())
+        {
+          R = it->second->get_address();
+        }
+        else
+        {
+          R = shared_ptr<address>(new invalid_address());
+        }
+      }
     }
     else
     {
       // Usuń akceptor...
       int aid = (0xFFFFFFFF - h);
-      return _acceptors[aid]->get_address();
+      auto it = _acceptors.find(aid);
+      if(it != _acceptors.end())
+      {
+        R = it->second->get_address();
+      }
+      else
+      {
+        R = shared_ptr<address>(new invalid_address());
+      }
     }
+    _connections_m.unlock();
+    return R;
   }
 
   set<netbase::user> netbase::_get_users_list()

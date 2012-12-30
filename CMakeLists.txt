@@ -79,6 +79,8 @@ add_library(danet SHARED
   src/protocols/basic/basic_00.cpp
   src/protocols/dummy/dummy.cpp
 
+  src/address/invalid_address.cpp
+
   src/address/tcp_ip_address.cpp
   src/acceptors/tcp_ip_acceptor.cpp
   src/connections/tcp_ip_connection.cpp
