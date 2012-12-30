@@ -202,4 +202,20 @@ namespace danet
   {
     return this->_proto->get_id();
   }
+
+  set<netbase::handle> netbase::_get_connections()
+  {
+    set<netbase::handle> r;
+    for(auto P : this->_connections)
+      r.insert(P.first);
+    return r;
+  }
+
+  set<netbase::handle> netbase::_get_acceptors()
+  {
+    set<netbase::handle> r;
+    for(auto P : this->_acceptors)
+      r.insert(P.first);
+    return r;
+  }
 }

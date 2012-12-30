@@ -26,13 +26,13 @@
 namespace danet
 {
   class netbase;
+  class acceptor;
+  class connection;
 
   /**
    * Type representing byte
    */
   typedef unsigned char byte;
-  class acceptor;
-  class connection;
 
   /**
    * Type representing network packet
@@ -171,6 +171,9 @@ namespace danet
      * @return The ID.
      */
     netbase::user _get_id();
+
+    std::set<handle> _get_connections();
+    std::set<handle> _get_acceptors();
 
     /**
      * Returns the reference to Boost Asio Service
