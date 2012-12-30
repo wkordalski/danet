@@ -49,7 +49,7 @@ namespace danet
       }
 
     protected:
-      basic(int rts);
+      basic();
 
       virtual void on_receive(packet pkg);
       virtual void do_send(packet p, const std::vector<netbase::user> &u);

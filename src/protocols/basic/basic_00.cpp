@@ -95,17 +95,21 @@ namespace danet
         if(P.second == h)
           du.push_back(P.first);
       }
+
+      // ROZESLIJ INFO O ODŁĄCZENIU OD SIECI
     }
 
     netbase::user basic<0>::get_id()
     {
-      // TODO
-      return 0;
+      return _id;
     }
 
     set<netbase::user> basic<0>::get_users()
     {
-      return set<netbase::user>();
+      set<netbase::user> r;
+      for(auto P : _rt)
+        r.insert(P.first);
+      return r;
     }
   }
 }
