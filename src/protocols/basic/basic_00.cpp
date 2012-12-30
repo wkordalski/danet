@@ -26,9 +26,8 @@ namespace danet
 {
   namespace protocols
   {
-    basic<0>::basic(int rts)
+    basic<0>::basic()
     {
-      this->rts = rts;
       // TODO: Implementation
     }
 
@@ -81,12 +80,21 @@ namespace danet
 
     void basic<0>::connection_add(netbase::handle h)
     {
-      // TODO
+      if(_id == 0)
+      {
+        // TODO => pobierz ID
+      }
+      // INACZEJ OLEJ
     }
 
     void basic<0>::connection_rem(netbase::handle h)
     {
-      // TODO
+      vector<netbase::user> du;
+      for(auto P : _rt)
+      {
+        if(P.second == h)
+          du.push_back(P.first);
+      }
     }
 
     netbase::user basic<0>::get_id()

@@ -43,9 +43,9 @@ namespace danet
        * @param rts Routing Table maximum size (-1 is unlimited)
        * @return The shared pointer to protocol instance.
        */
-      static std::shared_ptr<protocol> create(int rts)
+      static std::shared_ptr<protocol> create()
       {
-        return std::shared_ptr<protocol>(new basic<0>(rts));
+        return std::shared_ptr<protocol>(new basic<0>());
       }
 
     protected:
@@ -58,7 +58,17 @@ namespace danet
       virtual netbase::user get_id();
       virtual std::set<netbase::user> get_users();
 
-      int rts;
+      // My id
+      int _id = 0;
+
+      // Routing table
+      std::map<netbase::user, netbase::handle> _rt;
+
+      // All connections
+      std::vector<netbase::handle> _cn;
+
+      // Who is at the second side of the connection?
+      std::map<netbase::handle, netbase::user> _nb;
     };
   }
 }
