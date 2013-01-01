@@ -1,1 +1,36 @@
 Danet Library (Distributed Asynchronous Network)
+
+=== Compilation ===
+
+Requirements: cmake, g++ (>= 4.7), doxygen
+
+> Configure compilation
+
+ cd build_directory
+ cmake source_directory
+
+If you don't want to create documentation automaticly,
+you can pass -DMAKE_DOC=OFF option to the cmake command.
+
+> Build Danet
+
+ cd build_directory
+ make
+
+You have succefully built Danet library.
+
+
+
+=== Build Danet library samples ===
+
+> Compile Danet library (see Compilation)
+
+> Build samples
+
+ cd build_directory
+ # Builds chat
+ make chat
+ # Builds dummy server
+ make dyummy-server
+
+You have succefully built Danet library samples
