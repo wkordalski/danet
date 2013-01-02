@@ -199,7 +199,7 @@ namespace danet
     _msgs_m.unlock();
   }
 
-  void netbase::_send(std::vector<byte> v, const std::vector<user>& s)
+  void netbase::_send(std::shared_ptr<std::vector<byte>> v, const std::vector<user>& s)
   {
     this->_proto->do_send(v,s);
   }

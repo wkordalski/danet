@@ -115,7 +115,7 @@ namespace danet
      * @param v The data to send.
      * @param s Users to send the data to.
      */
-    void _send(std::vector<byte> v, const std::vector<user> &s);
+    void _send(std::shared_ptr<std::vector<byte>> v, const std::vector<user> &s);
 
     /**
      * Receives data from the message incomming queue.
