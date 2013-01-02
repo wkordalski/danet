@@ -58,6 +58,7 @@ namespace danet
     /**
      * Creates new instance of network manager.
      * @param pro The communication protocol to use.
+     * @param srl The serializer to serialize messages.
      */
     network(std::shared_ptr<protocol> pro, std::shared_ptr<serializer<T>> srl)
         : netbase(pro), srl(srl)
@@ -149,22 +150,37 @@ namespace danet
       return this->_get_id();
     }
 
+    /**
+     * Returns the active connections.
+     * @return Set with handles to connections.
+     */
     std::set<handle> connections()
     {
       return this->_get_connections();
     }
 
+    /**
+     * Returns the active acceptors.
+     * @return Set with handles to acceptors.
+     */
     std::set<handle> acceptors()
     {
       return this->_get_acceptors();
     }
 
+    /**
+     * Returns the waiting for acception connections.
+     * @return Set with handles to connections.
+     */
     std::set<handle> connecting()
     {
       return this->_get_connecting();
     }
 
   private:
+    /**
+     * Pointer to serializer.
+     */
     std::shared_ptr<danet::serializer<T>> srl;
   };
 }

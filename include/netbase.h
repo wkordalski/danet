@@ -112,7 +112,7 @@ namespace danet
 
     /**
      * Sends data to specified users.
-     * @param v The data to send.
+     * @param v Pointer to the data to send.
      * @param s Users to send the data to.
      */
     void _send(std::shared_ptr<std::vector<byte>> v, const std::vector<user> &s);
@@ -159,6 +159,10 @@ namespace danet
      */
     void _connection_rem(handle h);
 
+    /**
+     * Adds connection to ready connections pool.
+     * @param h Handle to the connection.
+     */
     void _connection_tik(handle h);
 
     /**
@@ -174,8 +178,22 @@ namespace danet
      */
     netbase::user _get_id();
 
+    /**
+     * Returns the active connections.
+     * @return Set with handles to connections.
+     */
     std::set<handle> _get_connections();
+
+    /**
+     * Returns the active acceptors.
+     * @return Set with handles to acceptors.
+     */
     std::set<handle> _get_acceptors();
+
+    /**
+     * Returns the waiting for acception connections.
+     * @return Set with handles to connections.
+     */
     std::set<handle> _get_connecting();
 
     /**
@@ -225,10 +243,13 @@ protected:
     int _acceptors_oid = 0;
 
     /**
-     * The connections pool
+     * The connections pool.
      */
     std::map<int,std::shared_ptr<connection>> _connections;
 
+    /**
+     * The not accepted connections pool.
+     */
     std::map<int,std::shared_ptr<connection>> _connecting;
 
     /**
