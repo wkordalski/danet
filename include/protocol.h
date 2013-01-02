@@ -60,7 +60,7 @@ namespace danet
      * @param p The data to send
      * @param u Users to send the data to.
      */
-    virtual void do_send(packet p, const std::vector<netbase::user> &u) = 0;
+    virtual void do_send(std::shared_ptr<packet> p, const std::vector<netbase::user> &u) = 0;
 
     /**
      * Called when new connection appears.
