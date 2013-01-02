@@ -123,6 +123,9 @@ namespace danet
       return nb->_proto->connection_rem(id);
     }
 
+    /**
+     * Adds connection to ready connections pool.
+     */
     void netbase_tik_connection()
     {
       nb->_connection_tik(id);

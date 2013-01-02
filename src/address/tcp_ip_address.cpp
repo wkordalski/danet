@@ -67,20 +67,6 @@ namespace danet
         if(this->ip == "") return false;
         return true;
       }
-
-//      address::phys_addr address::resolve(netbase *nb)
-//      {
-//        bnet::ip::tcp::resolver resolver(nb->get_service());
-//        bnet::ip::tcp::resolver::query query(ip, to_string(port));
-//        bsys::error_code ec;
-//        bnet::ip::tcp::resolver::iterator endpoint = resolver.resolve(query, ec);
-//        if(ec)
-//        {
-//          // Nastąpił błąd - prawdopodobnie nie znaleziono host...
-//          // TODO: Rzuć wyjątek, etc.
-//        }
-//        return *endpoint;
-//      }
     }
   }
 }

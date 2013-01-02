@@ -242,7 +242,7 @@ namespace danet
       }
     }
 
-    void dummy::do_send(packet p, const std::vector<netbase::user>& u)
+    void dummy::do_send(std::shared_ptr<packet> p, const std::vector<netbase::user>& u)
     {
       if(this->isserver)
       {
@@ -251,7 +251,7 @@ namespace danet
       else
       {
         shared_ptr<packet> nts = shared_ptr<packet>(new packet());
-        nts->reserve(p.size() + u.size() * 4 + 12);
+        nts->reserve(p->size() + u.size() * 4 + 12);
         nts->push_back(0);   // USER PACKET
         nts->push_back(0);   //--|
         nts->push_back(0);   //  |- CHECKSUM - empty now
@@ -259,7 +259,7 @@ namespace danet
         insert_int(this->mid, *nts);
         insert_int(u.size(), *nts);
         for(netbase::user U : u) insert_int(U, *nts);
-        for(byte B : p) nts->push_back(B);
+        for(byte B : *p) nts->push_back(B);
         this->netbase_do_send(nts, this->srv);
       }
     }

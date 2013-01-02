@@ -34,23 +34,27 @@ struct msg
 {
   int id;
   string str;
-  static vector<unsigned char> get_data(const msg &m)
+};
+
+class msg_serializer : public danet::serializer<msg>
+{
+  std::shared_ptr<std::vector<danet::byte>> save(const msg &m)
   {
-    vector<unsigned char> v;
-    v.reserve(m.str.size()+4);
+    std::shared_ptr<vector<unsigned char>> v(new vector<unsigned char>());
+    v->reserve(m.str.size()+4);
     int tid = m.id;
     for(int i = 0; i < 4; i++)
     {
-      v.push_back(tid & 0xFF);
+      v->push_back(tid & 0xFF);
       tid >>= 8;
     }
     for(char c: m.str)
     {
-      v.push_back((unsigned char)c);
+      v->push_back((unsigned char)c);
     }
     return v;
   }
-  static msg set_data(const vector<unsigned char> &v)
+  msg load(vector<unsigned char> v)
   {
     if(v.size() < 4)
     {
@@ -140,7 +144,7 @@ int main(int argc, char *argv[])
   // </editor-fold>
 
   clog << "Starting chat (from libdanet)" << endl;
-  danet::network<msg> n(danet::protocols::dummy::create(false));
+  danet::network<msg> n(danet::protocols::dummy::create(false), std::shared_ptr<danet::serializer<msg>>(new msg_serializer()));
   // <editor-fold defaultstate="collapsed" desc="Adding connections">
   vector<string> ls;
   if(vm.count("listen"))

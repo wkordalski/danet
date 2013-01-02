@@ -23,6 +23,7 @@
 
 #include "netbase.h"
 #include "address.h"
+#include "serializer.h"
 
 #include <set>
 #include <string>
@@ -57,8 +58,10 @@ namespace danet
     /**
      * Creates new instance of network manager.
      * @param pro The communication protocol to use.
+     * @param srl The serializer to serialize messages.
      */
-    network(std::shared_ptr<protocol> pro) : netbase(pro)
+    network(std::shared_ptr<protocol> pro, std::shared_ptr<serializer<T>> srl)
+        : netbase(pro), srl(srl)
     {
 
     }
@@ -101,7 +104,7 @@ namespace danet
      */
     void send(const T &m, const std::vector<user> &s)
     {
-      this->_send(T::get_data(m), s);
+      this->_send(srl->save(m), s);
     }
 
     /**
@@ -115,7 +118,7 @@ namespace danet
       std::vector<byte> v;
       this->_recv(v, uid);
       if(uid > 0)
-        m = T::set_data(v);
+        m = std::move(srl->load(v));
       return uid;
     }
 
@@ -147,20 +150,38 @@ namespace danet
       return this->_get_id();
     }
 
+    /**
+     * Returns the active connections.
+     * @return Set with handles to connections.
+     */
     std::set<handle> connections()
     {
       return this->_get_connections();
     }
 
+    /**
+     * Returns the active acceptors.
+     * @return Set with handles to acceptors.
+     */
     std::set<handle> acceptors()
     {
       return this->_get_acceptors();
     }
 
+    /**
+     * Returns the waiting for acception connections.
+     * @return Set with handles to connections.
+     */
     std::set<handle> connecting()
     {
       return this->_get_connecting();
     }
+
+  private:
+    /**
+     * Pointer to serializer.
+     */
+    std::shared_ptr<danet::serializer<T>> srl;
   };
 }
 

@@ -33,11 +33,16 @@ using namespace std;
 
 class nill
 {
-  static vector<unsigned char> get_data(const nill &m)
+  // EMPTY CLASS
+};
+
+class nill_serializer : public danet::serializer<nill>
+{
+  std::shared_ptr<std::vector<danet::byte>> save(const nill &)
   {
-    return vector<unsigned char>();
+    return std::shared_ptr<vector<unsigned char>>(new vector<unsigned char>());
   }
-  static nill set_data(const vector<unsigned char> &v)
+  nill load(vector<unsigned char> v)
   {
     return nill();
   }
@@ -88,7 +93,7 @@ int main(int argc, char *argv[])
   }
 
   clog << "Starting dummmy server (from libdanet)" << endl;
-  danet::network<nill> n(danet::protocols::dummy::create(true));
+  danet::network<nill> n(danet::protocols::dummy::create(true), std::shared_ptr<danet::serializer<nill>>(new nill_serializer()));
   vector<string> ls;
   if(vm.count("listen"))
   {

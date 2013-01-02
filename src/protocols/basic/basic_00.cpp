@@ -69,13 +69,12 @@ namespace danet
       this->netbase_add_received_message(pkg, 1);
     }
 
-    void basic<0>::do_send(packet p, const std::vector<netbase::user>& u)
+    void basic<0>::do_send(std::shared_ptr<packet> p, const std::vector<netbase::user>& u)
     {
       // TODO
       // Stwórz pakiet do wysłania i wyślij do handle
       //this->add_message_sending(p, uchwyt)
-      std::shared_ptr<packet> pp(new packet(move(p)));
-      this->netbase_do_send(pp, 1);
+      //this->netbase_do_send(p, 1);
     }
 
     void basic<0>::connection_add(netbase::handle h)
