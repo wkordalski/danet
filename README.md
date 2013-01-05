@@ -9,4 +9,8 @@ Danet library is a C++ library that makes easier to write network modules in you
 Compilation
 -----------
 
-Requirements: cmake, g++ (>= 4.7), doxygen
+### Requirements
+
+*cmake
+*g++ (>= 4.7)
+*doxygen
