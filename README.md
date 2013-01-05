@@ -11,6 +11,6 @@ Compilation
 
 ### Requirements
 
-*cmake
-*g++ (>= 4.7)
-*doxygen
+* cmake
+* g++ (>= 4.7)
+* doxygen
