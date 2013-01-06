@@ -12,15 +12,16 @@ Building library
 ### Requirements
 
 You have to have installed selected programs:
+
 * cmake
 * g++ (>= 4.7)
 * doxygen
 
 And these libraries (with development packages):
+
 * libboost-system
 
 ### Compiling
 
 ### Installing
-
 
