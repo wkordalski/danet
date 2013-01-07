@@ -49,6 +49,11 @@ namespace danet
       // Wyślij je.
     }
 
+    void basic<0>::do_send_all(std::shared_ptr<packet> p)
+    {
+      // TODO
+    }
+
     void basic<0>::connection_add(netbase::handle h)
     {
       if(_id == 0)

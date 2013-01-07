@@ -63,6 +63,12 @@ namespace danet
     virtual void do_send(std::shared_ptr<packet> p, const std::vector<netbase::user> &u) = 0;
 
     /**
+     * Called when network controller wants to send message to all users.
+     * @param p The data to send
+     */
+    virtual void do_send_all(std::shared_ptr<packet> p) = 0;
+
+    /**
      * Called when new connection appears.
      * @param h Handle to the new connection.
      */

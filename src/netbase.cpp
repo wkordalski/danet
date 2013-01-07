@@ -204,6 +204,11 @@ namespace danet
     this->_proto->do_send(v,s);
   }
 
+  void netbase::_send_all(std::shared_ptr<std::vector<byte>> v)
+  {
+    this->_proto->do_send_all(v);
+  }
+
   netbase::handle netbase::_connection_add(std::shared_ptr<connection> con)
   {
     _connections_m.lock();
@@ -335,5 +340,33 @@ namespace danet
     _connections[h] = move(_connecting[h]);
     _connecting.erase(h);
     _connections_m.unlock();
+  }
+
+  std::vector<byte> netbase::_user_to_data(const netbase::user& u)
+  {
+    vector<byte> p;
+    p.reserve(4);
+    p.push_back((u    )&0xFF);
+    p.push_back((u>> 8)&0xFF);
+    p.push_back((u>>16)&0xFF);
+    p.push_back((u>>24)&0xFF);
+    return p;
+  }
+
+  netbase::user netbase::_data_to_user(const std::vector<byte>& d, int& idx)
+  {
+    user a = 0;
+    for(int k = 3; k >= 0; k--)
+    {
+      if(d.size() <= (k+idx))
+      {
+        idx = d.size();
+        return a;
+      }
+      a <<= 8;
+      a |= (d[k+idx]);
+    }
+    idx += 4;
+    return a;
   }
 }
