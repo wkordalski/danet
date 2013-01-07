@@ -78,6 +78,11 @@ namespace danet
       //this->netbase_do_send(p, 1);
     }
 
+    void basic<0>::do_send_all(std::shared_ptr<packet> p)
+    {
+      // TODO
+    }
+
     void basic<0>::connection_add(netbase::handle h)
     {
       // TODO

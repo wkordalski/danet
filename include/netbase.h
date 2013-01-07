@@ -118,6 +118,12 @@ namespace danet
     void _send(std::shared_ptr<std::vector<byte>> v, const std::vector<user> &s);
 
     /**
+     * Sends data to all users.
+     * @param v Pointer to the data to send.
+     */
+    void _send_all(std::shared_ptr<std::vector<byte>> v);
+
+    /**
      * Receives data from the message incomming queue.
      * @param v The received data.
      * @param s The sender of the data.
@@ -195,6 +201,22 @@ namespace danet
      * @return Set with handles to connections.
      */
     std::set<handle> _get_connecting();
+
+    /**
+     * Converts user id to binary data.
+     * @param u The user id
+     * @return Vector of bytes.
+     */
+    std::vector<byte> _user_to_data(const user& u);
+
+    /**
+     * Converts binary data to user id.
+     * @param d Binary data
+     * @param idx The input index where to find the ID.
+     * After running this function idx points to the first byte after user ID.
+     * @return User's ID.
+     */
+    user _data_to_user(const std::vector<byte>& d, int& idx);
 
     /**
      * Returns the reference to Boost Asio Service
