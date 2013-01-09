@@ -41,6 +41,7 @@ namespace danet
 }
 
 #include "address.h"
+#include "config.h"
 
 #include <boost/asio.hpp>
 

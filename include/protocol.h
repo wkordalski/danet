@@ -48,6 +48,13 @@ namespace danet
      * Distroys the protocol object.
      */
     virtual ~protocol() {};
+
+    /**
+     * Checks if the protocol can send broadcast messages.
+     * @return True if it can. otherwise false.
+     */
+    virtual bool can_broadcast() { return false; }
+    
   protected:
     /**
      * Called when a connection received data.
