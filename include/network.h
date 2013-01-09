@@ -108,6 +108,15 @@ namespace danet
     }
 
     /**
+     * Sends a broadcast message to all users of the network.
+     * @param m Message to send.
+     */
+    void send_all(const T &m)
+    {
+      this->_send_all(srl->save(m));
+    }
+
+    /**
      * Receives messages from the incoming queue.
      * @param m Received message
      * @return User ID or 0 if no message in the queue.

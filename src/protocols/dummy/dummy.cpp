@@ -264,6 +264,11 @@ namespace danet
       }
     }
 
+    void dummy::do_send_all(std::shared_ptr<packet> p)
+    {
+      // TODO
+    }
+
     netbase::user dummy::get_id()
     {
       // TODO
