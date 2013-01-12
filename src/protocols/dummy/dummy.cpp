@@ -113,7 +113,7 @@ namespace danet
       }
     }
 
-    void dummy::on_receive(packet pkg)
+    void dummy::on_receive(packet pkg, netbase::handle h)
     {
       if(this->isserver)
       {

@@ -59,8 +59,9 @@ namespace danet
     /**
      * Called when a connection received data.
      * @param pkg The data received by the connection.
+     * @param h The handle which received the data.
      */
-    virtual void on_receive(packet pkg) = 0;
+    virtual void on_receive(packet pkg, netbase::handle h) = 0;
 
     /**
      * Called when network controller wants to send message.

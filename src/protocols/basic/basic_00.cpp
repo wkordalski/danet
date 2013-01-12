@@ -38,7 +38,7 @@ namespace danet
     {
     }
 
-    void basic<0>::on_receive(packet pkg)
+    void basic<0>::on_receive(packet pkg, netbase::handle h)
     {
       // Przeczytaj wiadomość
       // Jeśli systemowa, obsłuż      // Jeśli zwykła, przekaż do odbiorców i ew. dodaj do kolejki odebranych.
