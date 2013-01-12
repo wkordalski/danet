@@ -69,7 +69,9 @@ namespace danet
             nn = gen(_rn);
           } while(_rt.find(nn) != _rt.end());
           // nn is new id
-          
+          // send message(7) to h
+          // and send message(3) to all
+          // send message(4) to all
           _dm.unlock();
           break;
         case 6:
@@ -77,12 +79,17 @@ namespace danet
           break;
         case 7:
           // Add user response
+          // Read your id
+          // Send request for network topology of this network.
           break;
         case 8:
           // Add connection response.
           break;
         case 9:
-          // Connection removed
+          // Network topology request.
+          break;
+        case 10:
+          // Connection removed.
           break;
         default:
           // Invalid message id.
