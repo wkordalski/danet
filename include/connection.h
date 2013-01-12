@@ -102,9 +102,9 @@ namespace danet
      * Informs communication protocol about received data.
      * @param pkg Received data.
      */
-    void proto_on_recieve(packet pkg)
+    void proto_on_recieve(packet pkg, netbase::handle h)
     {
-      return nb->_proto->on_receive(move(pkg));
+      return nb->_proto->on_receive(move(pkg), h);
     }
 
     /**

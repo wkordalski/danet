@@ -195,7 +195,7 @@ namespace danet
           }
           // TODO: Błąd przy odbieraniu danych
         }
-        this->proto_on_recieve(move(rcv_d));
+        this->proto_on_recieve(move(rcv_d), this->id);
         rcv_m.unlock();
         this->recv();
       }

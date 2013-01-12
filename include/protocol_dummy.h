@@ -47,7 +47,7 @@ namespace danet
     protected:
       dummy(bool server);
 
-      virtual void on_receive(packet pkg);
+      virtual void on_receive(packet pkg, netbase::handle h);
       virtual void do_send(std::shared_ptr<packet> p, const std::vector<netbase::user> &u);
       virtual void do_send_all(std::shared_ptr<packet> p);
       virtual void connection_add(netbase::handle h);

@@ -37,7 +37,7 @@ namespace danet
       // TODO: implement
     }
 
-    void basic<0>::on_receive(packet pkg)
+    void basic<0>::on_receive(packet pkg, netbase::handle h)
     {
       // TODO
       /*if(pkg.size() < 8)
