@@ -18,54 +18,51 @@
  * For a list of authors see AUTHORS file.
  */
 
-#ifndef __DANET_ADDRESS_H
-#define	__DANET_ADDRESS_H
+#ifndef __DANET_INVALID_ADDRESS_H
+#define	__DANET_INVALID_ADDRESS_H
 
-namespace danet
-{
-  class address;
-}
+#include "address.h"
 
-#include "netbase.h"
 #include <memory>
 
 namespace danet
 {
-  class acceptor;
-  class connection;
-
   /**
-   * The address base class.
+   * Represents an address that is allways invalid.
    */
-  class address
+  class invalid_address : public danet::address
   {
-    friend class netbase;
   public:
     /**
-     * Distroys the address object.
+     * Creates such address.
      */
-    virtual ~address() {};
+    invalid_address();
 
     /**
-     * Checks if the address is valid
+     * Distroys address.
+     */
+    ~invalid_address();
+
+    /**
+     * Checks if address is valid.
      * @return True if address is valid, otherwise false.
      */
-    virtual bool valid() = 0;
+    bool valid();
 
   protected:
     /**
-     * Creates an acceptor based on address.
+     * Creates acceptor based on address.
      * @return Pointer to acceptor.
      */
-    virtual std::shared_ptr<danet::acceptor>     acceptor() = 0;
+    std::shared_ptr<danet::acceptor>     acceptor();
 
     /**
-     * Creates a connection based on address.
+     * Creates connection based on connection.
      * @return Pointer to connection.
      */
-    virtual std::shared_ptr<danet::connection>   connection() = 0;
+    std::shared_ptr<danet::connection>   connection();
   };
 }
 
-#endif	/* ADDRESS_H */
+#endif
 

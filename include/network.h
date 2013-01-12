@@ -23,6 +23,7 @@
 
 #include "netbase.h"
 #include "address.h"
+#include "serializer.h"
 
 #include <set>
 #include <string>
@@ -30,15 +31,15 @@
 
 
 /**
- * Przestrzeń nazw zawierająca obiekty do zarządzania siecią.
+ * Danet library namespace
  */
 namespace danet
 {
   /**
-   * Klasa menadżera sieci - zarządza połączeniami i dostarczaniem danych.
+   * Network controller - manages connections and provides data
    *
-   * @param T Typ reprezentujący wiadomości wysyłane przez menadżer sieci.
-   * Musi zawierać statyczne funkcje get_data i set_data.
+   * @tparam T Messages type you want to send or receive.
+   * The message type has to contain static functions get_data i set_data.
    */
   template<class T>
   class network : protected netbase
@@ -55,9 +56,12 @@ namespace danet
     typedef netbase::user user;
 
     /**
-     * Tworzy obiekt menadżera sieci
+     * Creates new instance of network manager.
+     * @param pro The communication protocol to use.
+     * @param srl The serializer to serialize messages.
      */
-    network(std::shared_ptr<protocol> pro) : netbase(pro)
+    network(std::shared_ptr<protocol> pro, std::shared_ptr<serializer<T>> srl)
+        : netbase(pro), srl(srl)
     {
 
     }
@@ -65,10 +69,9 @@ namespace danet
     network(const network<T> &) = delete;
 
     /**
-     * Każe menadżerowi sieci nasłuchiwać na danym IP i porcie.
-     *
-     * @param adr Adres, na którym mamy słuchać
-     * @return Zwraca uchwyt do akceptora.
+     * Asks the network controller to listen on specified address.
+     * @param adr The address to listen on.
+     * @return The handle to the listening acceptor.
      */
     handle listen(address *adr)
     {
@@ -76,10 +79,9 @@ namespace danet
     }
 
     /**
-     * Każe menadżerowi sieci połączyć się z danym IP i portem.
-     *
-     * @param adr Adres, do którego mamy się podłączyć
-     * @return Zwraca uchwyt do połączenia.
+     * Asks the network controller to connect to specified address.
+     * @param adr The address to connect to.
+     * @return The handle to the connection.
      */
     handle connect(address *adr)
     {
@@ -87,9 +89,8 @@ namespace danet
     }
 
     /**
-     * Zamyka połączenie lub akceptor oznaczony przez uchwyt h.
-     *
-     * @param h Uchwyt do zamknięcia
+     * Closes the acceptor or connection
+     * @param h Handle to the acceptor or connection.
      */
     void close(handle h)
     {
@@ -97,21 +98,28 @@ namespace danet
     }
 
     /**
-     * Wysyła wiadomość do użytkowników
-     *
-     * @param m Wiadomość do wysłania
-     * @param s ID osób, do których jest ta wiadomość
+     * Sends a message to specified users.
+     * @param m Message to send.
+     * @param s Users to send the message to.
      */
     void send(const T &m, const std::vector<user> &s)
     {
-      this->_send(T::get_data(m), s);
+      this->_send(srl->save(m), s);
     }
 
     /**
-     * Odbiera wiadomość z sieci
-     *
-     * @param m [out] Odebrana wiadomość.
-     * @return ID użytkownika, od którego otrzymaliśmy wiadomość lub 0 jeśli nie ma żadnych wiadomości.
+     * Sends a broadcast message to all users of the network.
+     * @param m Message to send.
+     */
+    void send_all(const T &m)
+    {
+      this->_send_all(srl->save(m));
+    }
+
+    /**
+     * Receives messages from the incoming queue.
+     * @param m Received message
+     * @return User ID or 0 if no message in the queue.
      */
     user receive(T &m)
     {
@@ -119,24 +127,70 @@ namespace danet
       std::vector<byte> v;
       this->_recv(v, uid);
       if(uid > 0)
-        m = T::set_data(v);
+        m = std::move(srl->load(v));
       return uid;
     }
 
+    /**
+     * Returns users in the network.
+     * @return Users IDs in the network.
+     */
     std::set<user> users()
     {
       return this->_get_users_list();
     }
 
+    /**
+     * Returns the address associated to acceptor or connection.
+     * @param h The acceptor or connection handle.
+     * @return The address.
+     */
     std::shared_ptr<danet::address> address(handle h)
     {
       return this->_get_address(h);
     }
 
+    /**
+     * Returns the ID associated to your network controller.
+     * @return The ID.
+     */
     user id()
     {
       return this->_get_id();
     }
+
+    /**
+     * Returns the active connections.
+     * @return Set with handles to connections.
+     */
+    std::set<handle> connections()
+    {
+      return this->_get_connections();
+    }
+
+    /**
+     * Returns the active acceptors.
+     * @return Set with handles to acceptors.
+     */
+    std::set<handle> acceptors()
+    {
+      return this->_get_acceptors();
+    }
+
+    /**
+     * Returns the waiting for acception connections.
+     * @return Set with handles to connections.
+     */
+    std::set<handle> connecting()
+    {
+      return this->_get_connecting();
+    }
+
+  private:
+    /**
+     * Pointer to serializer.
+     */
+    std::shared_ptr<danet::serializer<T>> srl;
   };
 }
 

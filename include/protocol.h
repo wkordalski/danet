@@ -35,35 +35,102 @@ namespace danet
   class acceptor;
   class connection;
 
+  /**
+   * Defines basic protocol interface.
+   */
   class protocol
   {
     friend class acceptor;
     friend class connection;
     friend class netbase;
   public:
+    /**
+     * Distroys the protocol object.
+     */
     virtual ~protocol() {};
+
+    /**
+     * Checks if the protocol can send broadcast messages.
+     * @return True if it can. otherwise false.
+     */
+    virtual bool can_broadcast() { return false; }
+    
   protected:
-    // Komendy od netbase
+    /**
+     * Called when a connection received data.
+     * @param pkg The data received by the connection.
+     */
     virtual void on_receive(packet pkg) = 0;
-    virtual void do_send(packet p, const std::vector<netbase::user> &u) = 0;
+
+    /**
+     * Called when network controller wants to send message.
+     * @param p The data to send
+     * @param u Users to send the data to.
+     */
+    virtual void do_send(std::shared_ptr<packet> p, const std::vector<netbase::user> &u) = 0;
+
+    /**
+     * Called when network controller wants to send message to all users.
+     * @param p The data to send
+     */
+    virtual void do_send_all(std::shared_ptr<packet> p) = 0;
+
+    /**
+     * Called when new connection appears.
+     * @param h Handle to the new connection.
+     */
     virtual void connection_add(netbase::handle h) = 0;
+
+    /**
+     * Called when a connection has broken.
+     * @param h Handle to the connection.
+     */
     virtual void connection_rem(netbase::handle h) = 0;
+
+    /**
+     * Returns the ID associated to the network controller and protocol.
+     * @return The ID or 0 if no ID assigned.
+     */
     virtual netbase::user get_id() = 0;
+
+    /**
+     * Returns the users list.
+     * @return The IDs of the users.
+     */
     virtual std::set<netbase::user> get_users() = 0;
 
-    // Netbase object pointer
+    /**
+     * The pointer to netbase object.
+     */
     netbase *nb;
 
-    // Operują na netbase (bo protocol jest przyjacielem netbase)
+    /**
+     * Informs netbase to add new message to incoming queue.
+     * @param p The message
+     * @param s Sender of the message
+     */
     void netbase_add_received_message(packet p, netbase::user s)
     {
       nb->_on_receive(move(p), s);
     }
+    /**
+     * Informs netbase to send data by a connection.
+     * @param p Data to send.
+     * @param h Connection handle.
+     */
     void netbase_do_send(std::shared_ptr<packet> p, netbase::handle h)
     {
       nb->_do_send(p, h);
     }
   };
+
+  /**
+   * Namespace with diffrent communication protocols.
+   */
+  namespace protocols
+  {
+
+  }
 }
 
 #endif

@@ -82,6 +82,7 @@ namespace danet
           this->netbase_rem_connection();
           return;
         }
+        this->netbase_tik_connection();
         this->proto_add_connection();
         this->listen();
       }
@@ -99,7 +100,7 @@ namespace danet
         rcv_m.unlock();
       }
 
-      void connection::do_send(shared_ptr<packet> data)
+      void connection::do_send(std::shared_ptr<packet> data)
       {
         snd_m.lock();
         bool emptst = snd_q.empty();

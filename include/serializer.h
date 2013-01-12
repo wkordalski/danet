@@ -18,54 +18,41 @@
  * For a list of authors see AUTHORS file.
  */
 
-#ifndef __DANET_ADDRESS_H
-#define	__DANET_ADDRESS_H
+#ifndef __DANET_SERIALIZER_H
+#define	__DANET_SERIALIZER_H
 
-namespace danet
-{
-  class address;
-}
-
-#include "netbase.h"
 #include <memory>
 
 namespace danet
 {
-  class acceptor;
-  class connection;
-
   /**
-   * The address base class.
+   * Base class for serializers used to send data through network.
+   * @tparam T The message type
    */
-  class address
+  template<class T>
+  class serializer
   {
-    friend class netbase;
   public:
     /**
-     * Distroys the address object.
+     * Distroys the serializer.
      */
-    virtual ~address() {};
+    virtual ~serializer() {};
 
     /**
-     * Checks if the address is valid
-     * @return True if address is valid, otherwise false.
+     * Loads a message from it's binary form.
+     * @param b Binary form of data.
+     * @return The message.
      */
-    virtual bool valid() = 0;
-
-  protected:
-    /**
-     * Creates an acceptor based on address.
-     * @return Pointer to acceptor.
-     */
-    virtual std::shared_ptr<danet::acceptor>     acceptor() = 0;
+    virtual T load(std::vector<danet::byte> b) = 0;
 
     /**
-     * Creates a connection based on address.
-     * @return Pointer to connection.
+     * Saves message to it's binary form.
+     * @param m The message.
+     * @return Binary form of data.
      */
-    virtual std::shared_ptr<danet::connection>   connection() = 0;
+    virtual std::shared_ptr<std::vector<danet::byte>> save(const T & m) = 0;
   };
 }
 
-#endif	/* ADDRESS_H */
+#endif	/* SERIALIZER_H */
 

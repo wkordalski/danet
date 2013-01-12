@@ -18,28 +18,32 @@
  * For a list of authors see AUTHORS file.
  */
 
-#ifndef __DANET_PROTOCOLS_BASIC_BASIC_H
-#define	__DANET_PROTOCOLS_BASIC_BASIC_H
+#include "address_invalid.h"
 
-#include "protocol.h"
+using namespace std;
 
 namespace danet
 {
-  namespace protocols
+  invalid_address::invalid_address()
   {
-    /**
-     * Basic communication protocol family
-     * @tparam version Protocol version
-     */
-    template<unsigned int version>
-    class basic : public danet::protocol
-    {
-      static_assert(version < 1, "Invalid version number");
-    public:
-      virtual ~basic() {}
-    };
+  }
+
+  invalid_address::~invalid_address()
+  {
+  }
+
+  shared_ptr<danet::acceptor> invalid_address::acceptor()
+  {
+    return shared_ptr<danet::acceptor>(nullptr);
+  }
+
+  shared_ptr<danet::connection> invalid_address::connection()
+  {
+    return shared_ptr<danet::connection>(nullptr);
+  }
+
+  bool invalid_address::valid()
+  {
+    return false;
   }
 }
-
-#endif	/* BASIC_H */
-

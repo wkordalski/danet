@@ -26,7 +26,7 @@ option(MAKE_DOC "Build documentation of Danet library" ON)
 ### VERSION
 set(DANET_MAJOR_VERSION 0)
 set(DANET_MINOR_VERSION 0)
-set(DANET_PATCH_VERSION 1)
+set(DANET_PATCH_VERSION 3)
 set(DANET_VERSION
   ${DANET_MAJOR_VERSION}.${DANET_MINOR_VERSION}.${DANET_PATCH_VERSION}
 )
@@ -81,6 +81,8 @@ add_library(danet SHARED
   src/protocols/basic/basic_00.cpp
   src/protocols/dummy/dummy.cpp
 
+  src/address/invalid_address.cpp
+
   src/address/tcp_ip_address.cpp
   src/acceptors/tcp_ip_acceptor.cpp
   src/connections/tcp_ip_connection.cpp
@@ -107,7 +109,7 @@ set(DANET_PUBLIC_HEADER
 
 set_target_properties(danet PROPERTIES
   PUBLIC_HEADER "${DANET_PUBLIC_HEADER};${CMAKE_CURRENT_BINARY_DIR}/config.h"
-  SOVERSION ${DANET_MAJOR_VERSION}
+  SOVERSION ${DANET_MAJOR_VERSION}.${DANET_MINOR_VERSION}
   VERSION ${DANET_VERSION}
 )
 

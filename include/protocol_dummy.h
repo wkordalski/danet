@@ -27,6 +27,9 @@ namespace danet
 {
   namespace protocols
   {
+    /**
+     * Dummy communication network (supports client-server networks)
+     */
     class dummy : public danet::protocol
     {
     public:
@@ -45,7 +48,8 @@ namespace danet
       dummy(bool server);
 
       virtual void on_receive(packet pkg);
-      virtual void do_send(packet p, const std::vector<netbase::user> &u);
+      virtual void do_send(std::shared_ptr<packet> p, const std::vector<netbase::user> &u);
+      virtual void do_send_all(std::shared_ptr<packet> p);
       virtual void connection_add(netbase::handle h);
       virtual void connection_rem(netbase::handle h);
       virtual netbase::user get_id();
