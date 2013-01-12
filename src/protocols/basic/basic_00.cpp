@@ -39,6 +39,42 @@ namespace danet
       // Przeczytaj wiadomość
       // Jeśli systemowa, obsłuż
       // Jeśli zwykła, przekaż do odbiorców i ew. dodaj do kolejki odebranych.
+      switch(pkg[0])
+      {
+        case 0:
+          // Null package
+          break;
+        case 1:
+          // Normal package
+          break;
+        case 2:
+          // Broadcast package
+          break;
+        case 3:
+          // New user
+          break;
+        case 4:
+          // New connection
+          break;
+        case 5:
+          // Somebody wants to join.
+          break;
+        case 6:
+          // Somebody wants to add a connection.
+          break;
+        case 7:
+          // Add user response
+          break;
+        case 8:
+          // Add connection response.
+          break;
+        case 9:
+          // Connection removed
+          break;
+        default:
+          // Invalid message id.
+          break;
+      }
     }
 
     void basic<0>::do_send(std::shared_ptr<packet> p, const std::vector<netbase::user>& u)
@@ -59,7 +95,15 @@ namespace danet
     {
       if(_id == 0)
       {
-        // TODO => pobierz ID
+        // TODO
+        // Send add user request
+        shared_ptr<packet> p(new packet());
+        p->push_back(5);
+        p->push_back(0);  //
+        p->push_back(0);  // CHECKSUM
+        p->push_back(0);  //
+        this->netbase_do_send(p, h);
+        return;
       }
       // INACZEJ OLEJ
       // ZAPISZ INFORMACJĘ, KTO JEST PO DRUGIEJ STRONIE.
