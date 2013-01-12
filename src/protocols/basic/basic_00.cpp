@@ -52,6 +52,7 @@ namespace danet
     void basic<0>::do_send_all(std::shared_ptr<packet> p)
     {
       // TODO
+      // Simply send to handles from bcast_algo function.
     }
 
     void basic<0>::connection_add(netbase::handle h)
@@ -87,6 +88,11 @@ namespace danet
       for(auto P : _rt)
         r.insert(P.first);
       return r;
+    }
+    
+    set<netbase::handle> basic<0>::bcast_algo(netbase::user sender)
+    {
+      // TODO
     }
   }
 }

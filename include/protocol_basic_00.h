@@ -58,6 +58,8 @@ namespace danet
       virtual void connection_rem(netbase::handle h);
       virtual netbase::user get_id();
       virtual std::set<netbase::user> get_users();
+      
+      std::set<netbase::handle> bcast_algo(netbase::user sender);
 
       // My id
       int _id = 0;
@@ -70,6 +72,9 @@ namespace danet
 
       // Who is at the second side of the connection?
       std::map<netbase::handle, netbase::user> _nb;
+      
+      // Network map
+      std::map<netbase::user, std::vector<netbase::user>> _nm;
     };
   }
 }
