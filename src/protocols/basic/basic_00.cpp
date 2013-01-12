@@ -20,6 +20,8 @@
 
 #include "protocol_basic_00.h"
 
+#include <ctime>
+
 using namespace std;
 
 namespace danet
@@ -28,6 +30,8 @@ namespace danet
   {
     basic<0>::basic()
     {
+      // Something better for seed.
+      _rn.seed(time(0));
     }
 
     basic<0>::~basic()
@@ -37,8 +41,7 @@ namespace danet
     void basic<0>::on_receive(packet pkg)
     {
       // Przeczytaj wiadomość
-      // Jeśli systemowa, obsłuż
-      // Jeśli zwykła, przekaż do odbiorców i ew. dodaj do kolejki odebranych.
+      // Jeśli systemowa, obsłuż      // Jeśli zwykła, przekaż do odbiorców i ew. dodaj do kolejki odebranych.
       switch(pkg[0])
       {
         case 0:
@@ -58,6 +61,16 @@ namespace danet
           break;
         case 5:
           // Somebody wants to join.
+          std::uniform_int_distribution<netbase::user> gen(1, 0x7FFFFFFF);
+          int nn;
+          _dm.lock();
+          do
+          {
+            nn = gen(_rn);
+          } while(_rt.find(nn) != _rt.end());
+          // nn is new id
+          
+          _dm.unlock();
           break;
         case 6:
           // Somebody wants to add a connection.
@@ -93,9 +106,10 @@ namespace danet
 
     void basic<0>::connection_add(netbase::handle h)
     {
-      if(_id == 0)
+      _dm.lock();
+      if(_id == -1)
       {
-        // TODO
+        _id = 0;
         // Send add user request
         shared_ptr<packet> p(new packet());
         p->push_back(5);
@@ -103,10 +117,13 @@ namespace danet
         p->push_back(0);  // CHECKSUM
         p->push_back(0);  //
         this->netbase_do_send(p, h);
-        return;
       }
-      // INACZEJ OLEJ
-      // ZAPISZ INFORMACJĘ, KTO JEST PO DRUGIEJ STRONIE.
+      else
+      {
+        // INACZEJ OLEJ
+        // ZAPISZ INFORMACJĘ, KTO JEST PO DRUGIEJ STRONIE.
+      }
+      _dm.unlock();
     }
 
     void basic<0>::connection_rem(netbase::handle h)
@@ -123,7 +140,7 @@ namespace danet
 
     netbase::user basic<0>::get_id()
     {
-      return _id;
+      return (_id == -1)?0:_id;
     }
 
     set<netbase::user> basic<0>::get_users()

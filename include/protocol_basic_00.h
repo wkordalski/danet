@@ -24,6 +24,7 @@
 #include "protocol_basic.h"
 
 #include <memory>
+#include <random>
 
 namespace danet
 {
@@ -62,7 +63,7 @@ namespace danet
       std::set<netbase::handle> bcast_algo(netbase::user sender);
 
       // My id
-      int _id = 0;
+      int _id = -1;
 
       // Routing table
       std::map<netbase::user, netbase::handle> _rt;
@@ -75,6 +76,12 @@ namespace danet
       
       // Network map
       std::map<netbase::user, std::vector<netbase::user>> _nm;
+      
+      // Data mutex
+      std::mutex _dm;
+      
+      // Random number generator
+      std::mt19937 _rn;
     };
   }
 }
